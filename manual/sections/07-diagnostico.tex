@@ -1,0 +1,88 @@
+\chapter{Diagnóstico}
+\label{chap:diagnostico}
+
+Cuando aparece un error, conviene comprobar el sistema en el mismo orden seguido durante
+la puesta en marcha: conexión PCIe, controlador, entorno de Python, modelo y datos.
+La \cref{tab:troubleshooting} resume los fallos más habituales y dónde empezar a buscarlos.
+
+\begin{longtable}{@{}L{0.25\textwidth}L{0.34\textwidth}L{0.33\textwidth}@{}}
+\caption{Guía rápida de diagnóstico.}
+\label{tab:troubleshooting}\\
+\toprule
+\textbf{Síntoma} & \textbf{Comprueba} & \textbf{Qué hacer} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Síntoma} & \textbf{Comprueba} & \textbf{Qué hacer} \\
+\midrule
+\endhead
+
+La tarjeta no aparece en \code{lspci}. &
+Alimentación, cable FFC, montaje y configuración PCIe de la Raspberry Pi 5. &
+Revisa primero la conexión física y la configuración PCIe. \\
+
+La tarjeta aparece en PCIe, pero no existe \code{/dev/akida*}. &
+Versión del kernel, headers, \code{dkms status}, \code{lsmod} y mensajes de \code{dmesg}. &
+Revisa la instalación y compatibilidad del controlador. \\
+
+Existe \code{/dev/akida*}, pero \code{akida.devices()} está vacío. &
+Entorno virtual activo, versión de Akida y permisos del dispositivo. &
+Comprueba que estás utilizando el entorno correcto y que el usuario puede acceder al dispositivo. \\
+
+\code{import akida} produce un error. &
+Versión de Python y paquetes instalados en el entorno activo. &
+Activa el entorno virtual correcto o reinstala Akida dentro de él. \\
+
+El archivo FBZ no carga. &
+Ruta del archivo, versión de Akida y compatibilidad del modelo. &
+Comprueba primero el modelo de prueba incluido con el repositorio. \\
+
+El modelo no puede mapearse con \code{hw\_only=True}. &
+Salida de \code{model.summary()}, capas utilizadas y versión del modelo. &
+Comprueba que el modelo es compatible con la ejecución completa en la AKD1000. \\
+
+La entrada es rechazada. &
+Forma, tipo, rango y orden de los datos. &
+Compara la entrada con \code{model.input\_shape} y con el preprocesado utilizado durante
+la conversión. \\
+
+La ejecución termina, pero la salida no es la esperada. &
+Preprocesado, orden de las muestras y uso de \code{forward()} o \code{predict()}. &
+Prueba primero una entrada cuyo resultado esperado sea conocido. \\
+
+La latencia cambia mucho entre ejecuciones. &
+Modo de reloj, modo de mapeo, calentamiento, carga del host y número de repeticiones. &
+Repite la medida manteniendo fija la configuración. \\
+
+No aparece una medida de potencia. &
+Medición habilitada y estadísticas devueltas por Akida. &
+Comprueba la configuración y aumenta la duración de la prueba si es necesario. \\
+
+\bottomrule
+\end{longtable}
+
+\section{Información útil para diagnosticar un fallo}
+
+La herramienta incluida con el repositorio puede recoger buena parte de la información
+necesaria para localizar un problema:
+
+\begin{lstlisting}[language=bash]
+mkdir -p evidence
+akd1000-bringup doctor --json > evidence/doctor.json
+\end{lstlisting}
+
+Si necesitas más detalle, guarda también el estado del sistema y del controlador:
+
+\begin{lstlisting}[language=bash]
+uname -a > evidence/uname.txt
+lspci -nnk > evidence/lspci-nnk.txt
+dkms status > evidence/dkms.txt
+ls -l /dev/akida* > evidence/device-nodes.txt 2>&1
+python -m pip freeze > evidence/pip-freeze.txt
+sudo dmesg | grep -iE 'akida|edma|pcie' > evidence/driver-log.txt
+\end{lstlisting}
+
+Cuando informes de un problema, conserva también el comando que produjo el error y el
+mensaje completo. Con esa información suele ser posible distinguir si el fallo está en
+PCIe, el controlador, el entorno de Python, el modelo o los datos.

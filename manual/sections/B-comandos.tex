@@ -1,0 +1,150 @@
+\chapter{Referencia rápida de comandos}
+\label{app:comandos}
+
+Este apéndice reúne los comandos principales del procedimiento en Linux.
+Las explicaciones y condiciones de uso se encuentran en los capítulos correspondientes.
+
+\section{Comprobar el sistema}
+
+\begin{lstlisting}[language=bash]
+uname -r
+uname -m
+cat /etc/os-release
+lspci -nn
+\end{lstlisting}
+
+\section{Raspberry Pi 5}
+
+Para un adaptador PCIe no HAT+, edita:
+
+\begin{lstlisting}[language=bash]
+sudoedit /boot/firmware/config.txt
+\end{lstlisting}
+
+y añade, si todavía no está presente:
+
+\begin{lstlisting}
+dtparam=pciex1
+\end{lstlisting}
+
+Después reinicia y comprueba la conexión:
+
+\begin{lstlisting}[language=bash]
+sudo reboot
+lspci -nn
+\end{lstlisting}
+
+\section{Controlador PCIe}
+
+En Ubuntu:
+
+\begin{lstlisting}[language=bash]
+sudo apt update
+sudo apt install dkms build-essential "linux-headers-$(uname -r)"
+\end{lstlisting}
+
+Descarga e instala el controlador:
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/Brainchip-Inc/akida_dw_edma.git
+cd akida_dw_edma
+git rev-parse HEAD
+./install.sh
+\end{lstlisting}
+
+Comprueba la instalación:
+
+\begin{lstlisting}[language=bash]
+dkms status
+lsmod | grep -i akida
+ls -l /dev/akida*
+lspci -nnk
+\end{lstlisting}
+
+\section{Entorno de Python}
+
+Desde la carpeta principal del proyecto:
+
+\begin{lstlisting}[language=bash]
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+\end{lstlisting}
+
+Instalación actual de MetaTF:
+
+\begin{lstlisting}[language=bash]
+python -m pip install "metatf==2.19.3"
+\end{lstlisting}
+
+o entorno de referencia del repositorio:
+
+\begin{lstlisting}[language=bash]
+python -m pip install -r requirements/reproducible.txt
+\end{lstlisting}
+
+Instala después las herramientas del proyecto:
+
+\begin{lstlisting}[language=bash]
+python -m pip install -e . --no-deps
+python -m pip check
+\end{lstlisting}
+
+\section{Pruebas básicas}
+
+Prueba en software:
+
+\begin{lstlisting}[language=bash]
+python examples/00_simulator_smoke.py
+akd1000-bringup verify \
+  --id smoke \
+  --model models/akida_v1_smoke_test.fbz
+\end{lstlisting}
+
+Diagnóstico:
+
+\begin{lstlisting}[language=bash]
+akd1000-bringup doctor
+\end{lstlisting}
+
+Prueba en la tarjeta:
+
+\begin{lstlisting}[language=bash]
+akida devices
+python examples/01_hardware_smoke.py
+\end{lstlisting}
+
+\section{Ejecutar un modelo propio}
+
+\begin{lstlisting}[language=bash]
+akd1000-bringup run \
+  --model models/model.fbz \
+  --input data/input.npy \
+  --method forward \
+  --clock Performance \
+  --map AllNps \
+  --output outputs/raw-output.npy
+\end{lstlisting}
+
+\section{Benchmark}
+
+\begin{lstlisting}[language=bash]
+akd1000-bringup benchmark \
+  --model models/model.fbz \
+  --input data/inputs.npy \
+  --method forward \
+  --clock Performance \
+  --map AllNps \
+  --warmup 8 \
+  --repetitions 1 \
+  --output outputs/smoke
+\end{lstlisting}
+
+\section{Diagnóstico rápido}
+
+\begin{enumerate}
+  \item Si la tarjeta no aparece en \code{lspci}, revisa el montaje y la configuración PCIe.
+  \item Si aparece en PCIe pero falta \code{/dev/akida*}, revisa el controlador.
+  \item Si existe el nodo pero \code{akida.devices()} está vacío, revisa el entorno y los permisos.
+  \item Si el modelo de prueba funciona y el modelo propio no, revisa el modelo y sus datos de entrada.
+\end{enumerate}

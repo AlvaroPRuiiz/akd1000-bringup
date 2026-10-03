@@ -1,0 +1,142 @@
+\chapter{Preparación del host y controlador PCIe}
+\label{chap:host-driver}
+
+\section{Comprobaciones iniciales}
+
+Antes de instalar el controlador, comprueba la versión del sistema, la arquitectura y el kernel.
+En Linux puedes guardar esta información en la carpeta \code{evidence}:
+
+\begin{lstlisting}[language=bash]
+mkdir -p evidence
+{
+  cat /etc/os-release
+  uname -r
+  uname -m
+  lspci -nn
+} | tee evidence/host-inventory.txt
+\end{lstlisting}
+
+\code{uname -m} suele mostrar \code{x86\_64} en un PC y \code{aarch64} en una
+Raspberry Pi 5 con un sistema de 64 bits. La versión del kernel será necesaria para
+comprobar la compatibilidad del controlador.
+
+\section{Habilitar PCIe en Raspberry Pi 5}
+
+Esta sección solo es necesaria si utilizas una Raspberry Pi 5. Los dispositivos HAT+
+compatibles pueden detectarse automáticamente, mientras que para un adaptador PCIe no HAT+
+Raspberry Pi indica que debe habilitarse la interfaz PCIe en el archivo de configuración
+\cite{rpi_pcie}.
+
+En Raspberry Pi OS actual, abre:
+
+\begin{lstlisting}[language=bash]
+sudoedit /boot/firmware/config.txt
+\end{lstlisting}
+
+Si esa ruta no existe, comprueba \code{/boot/config.txt}. Añade:
+
+\begin{lstlisting}[language=bash]
+dtparam=pciex1
+\end{lstlisting}
+
+Guarda el archivo y reinicia:
+
+\begin{lstlisting}[language=bash]
+sudo reboot
+\end{lstlisting}
+
+Raspberry Pi 5 utiliza PCIe Gen2 por defecto. Aunque es posible habilitar Gen3,
+Raspberry Pi advierte que la placa no está certificada para funcionar de forma estable
+a esa velocidad \cite{rpi_pcie}. Para la puesta en marcha se mantiene Gen2.
+
+\section{Comprobar la conexión PCIe}
+
+Después del arranque, comprueba que el sistema detecta la tarjeta:
+
+\begin{lstlisting}[language=bash]
+lspci -nn
+\end{lstlisting}
+
+Debe aparecer un dispositivo PCIe correspondiente a la tarjeta. Si no aparece, revisa
+el montaje, la alimentación y, en Raspberry Pi 5, que PCIe esté habilitado antes de
+continuar con el controlador.
+
+Si necesitas más información sobre el dispositivo detectado, utiliza:
+
+\begin{lstlisting}[language=bash]
+lspci -nnk
+\end{lstlisting}
+
+En este punto solo se está comprobando la conexión PCIe. Que la tarjeta aparezca en
+\code{lspci} no significa todavía que el controlador Akida esté instalado.
+
+\section{Instalar el controlador}
+
+El controlador PCIe oficial de BrainChip se distribuye en el repositorio
+\code{akida\_dw\_edma}. Antes de instalarlo, comprueba la versión del kernel:
+
+\begin{lstlisting}[language=bash]
+uname -r
+\end{lstlisting}
+
+La versión del controlador consultada para este manual admite kernels desde 5.4 hasta
+6.8. En kernels 6.9 o posteriores el módulo no se compila \cite{brainchip_driver}.
+Como esta compatibilidad puede cambiar, conviene comprobar también el README del
+repositorio antes de instalarlo.
+
+\begin{stopbox}{Kernel no compatible}
+Si la versión del kernel queda fuera del intervalo soportado por el controlador,
+no continúes con la instalación hasta comprobar si BrainChip ha publicado una versión
+compatible.
+\end{stopbox}
+
+En Ubuntu, instala las dependencias indicadas por BrainChip:
+
+\begin{lstlisting}[language=bash]
+sudo apt update
+sudo apt install dkms build-essential "linux-headers-$(uname -r)"
+\end{lstlisting}
+
+En otras distribuciones los nombres de los paquetes pueden cambiar, pero deben
+instalarse DKMS, las herramientas de compilación y los headers correspondientes al
+kernel en uso.
+
+A continuación, clona el repositorio e instala el controlador:
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/Brainchip-Inc/akida_dw_edma.git
+cd akida_dw_edma
+git rev-parse HEAD
+./install.sh
+\end{lstlisting}
+
+El último comando mostrado por \code{git rev-parse HEAD} permite conservar la revisión
+exacta del controlador utilizada, aunque puedes ser libre de usar una configuración propia.
+
+\section{Comprobar el controlador}
+
+Una vez terminada la instalación, comprueba el estado de DKMS y que el dispositivo
+Akida está disponible:
+
+\begin{lstlisting}[language=bash]
+dkms status
+lsmod | grep -i akida
+ls -l /dev/akida*
+lspci -nnk
+\end{lstlisting}
+
+La instalación puede considerarse correcta cuando el dispositivo sigue apareciendo
+en PCIe, el módulo está cargado y existe al menos un nodo \code{/dev/akida*}.
+
+Si el dispositivo aparece en \code{lspci} pero falta \code{/dev/akida*}, consulta los
+mensajes del kernel:
+
+\begin{lstlisting}[language=bash]
+sudo dmesg | grep -iE 'akida|edma|pcie' | tail -n 120
+\end{lstlisting}
+
+Si el nodo existe pero solo puede utilizarse como \code{root}, revisa sus permisos y
+la regla udev instalada por el controlador antes de continuar.
+
+Con el controlador funcionando, continúa con la configuración del entorno de software
+del \cref{chap:software}.

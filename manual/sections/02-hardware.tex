@@ -1,0 +1,121 @@
+\chapter{Hardware, alimentación y montaje}
+\label{chap:hardware}
+
+\section{Inventario del montaje}
+
+Antes de empezar, anota los datos que puedas comprobar de cada componente.
+No completes una referencia a partir de una fotografía o por parecido con otro modelo.
+Si algún dato, como la revisión de una placa o su tensión de alimentación, no puede
+confirmarse con la etiqueta, la factura o la documentación del fabricante, indícalo como
+\emph{no verificado}.
+
+\begin{table}[H]
+\centering
+\caption{Datos básicos del montaje.}
+\label{tab:inventario-lector}
+\begin{tabularx}{\textwidth}{@{}L{0.28\textwidth}L{0.31\textwidth}Y@{}}
+\toprule
+\textbf{Elemento} & \textbf{Datos} & \textbf{Fuente} \\
+\midrule
+Host & Fabricante, modelo, RAM y revisión & Equipo, firmware o factura \\
+Sistema & Distribución, versión y arquitectura & \code{/etc/os-release}, \code{uname -m} \\
+Kernel & Versión completa & \code{uname -r} \\
+Tarjeta Akida & Modelo y revisión & Etiqueta y documentación de BrainChip \\
+Adaptador & Fabricante, modelo y tipo de enlace & Serigrafía y documentación del fabricante \\
+Cable & Tipo y orientación & Marcado y documentación del adaptador \\
+Fuente del host & Tensión y potencia & Etiqueta de la fuente \\
+Fuente de la tarjeta o carrier & Tensión, polaridad y conector & Etiqueta y documentación del fabricante \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Los conectores M.2, Mini PCIe, PCIe convencional y el conector FFC de Raspberry Pi 5
+no son equivalentes. Comprueba siempre el tipo de conexión y la orientación del cable
+en la documentación del equipo utilizado.
+
+\section{Topologías cubiertas}
+
+\subsection{Host Linux con ranura PCIe}
+
+En un PC Linux, la tarjeta se instala en una ranura PCIe compatible y se alimenta según
+las indicaciones de su documentación. El equipo debe estar apagado y desconectado antes
+de insertar o retirar la tarjeta.
+
+Una vez realizado el montaje, continúa con el \cref{chap:host-driver}. Si \code{lspci}
+no detecta un nuevo dispositivo PCIe, el problema debe resolverse antes de continuar
+con la configuración de Python.
+
+\subsection{Raspberry Pi 5 con adaptador FFC a PCIe}
+
+Raspberry Pi 5 dispone de una interfaz PCIe Gen~2~$\times$1 accesible mediante un
+conector FFC \cite{rpi_pcie}. Para utilizar una tarjeta PCIe convencional es necesario
+un adaptador que lleve este enlace hasta una ranura compatible.
+
+Aunque el adaptador disponga de una ranura físicamente más larga, el enlace proporcionado
+por Raspberry Pi 5 sigue siendo $\times$1.
+
+El montaje utilizado en el TFG se muestra en la \cref{fig:montaje-aislado}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{hardware-carrier-detail-isolated.png}
+  \caption[Montaje Raspberry Pi 5, carrier y AKD1000]{Montaje formado por una Raspberry Pi 5,
+  un adaptador PCIe y la tarjeta BrainChip AKD1000 utilizado durante el TFG.}
+  \label{fig:montaje-aislado}
+\end{figure}
+
+\section{Montaje}
+
+Si la documentación del fabricante indica una secuencia de conexión diferente,
+sigue ese procedimiento.
+
+\begin{enumerate}
+  \item Apaga el host y desconecta las fuentes de alimentación.
+
+  \item Comprueba la orientación del cable FFC y la tensión de alimentación del
+        adaptador o de la tarjeta.
+
+  \item Conecta el cable FFC al adaptador respetando la orientación indicada.
+
+  \item Inserta la AKD1000 completamente en la ranura PCIe del carrier.
+
+  \item Revisa las conexiones antes de alimentar de nuevo el sistema.
+\end{enumerate}
+
+\begin{stopbox}{Si aparece algún problema eléctrico}
+Desconecta la alimentación si aparece humo, olor anormal, una temperatura excesiva
+o cualquier otro comportamiento que indique un posible problema de alimentación
+o montaje.
+\end{stopbox}
+
+\section{Carrier Waveshare utilizado en el TFG}
+
+En el montaje del TFG se utilizó un adaptador Waveshare conectado a la Raspberry Pi 5
+mediante un cable FFC de 50~mm. En la placa puede leerse \code{DC 12V} y
+\emph{PCIe TO PCIe x1 Board (C)}.
+
+La documentación actual de Waveshare describe este modelo con una ranura compatible
+mecánicamente con tarjetas PCIe $\times$1, $\times$4, $\times$8 y $\times$16
+\cite{waveshare_board_c}. El enlace con Raspberry Pi 5 continúa siendo, en cualquier caso,
+PCIe $\times$1.
+
+No se conserva el número de artículo exacto del adaptador utilizado. La identificación
+disponible del montaje se recoge en el \cref{tab:componentes-tfg}.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\textwidth]{hardware-powered-isolated.png}
+  \caption[Montaje alimentado]{Montaje utilizado durante una de las sesiones del TFG.}
+  \label{fig:montaje-alimentado}
+\end{figure}
+
+\section{Comprobación antes del encendido}
+
+Antes de alimentar el montaje, comprueba que el cable FFC está correctamente orientado,
+que la tarjeta está bien insertada y que las tensiones de alimentación coinciden con las
+indicadas para los componentes utilizados.
+
+\begin{stopbox}{Condición de parada H0}
+Si no puedes confirmar la tensión, la polaridad o la orientación de alguna conexión,
+no alimentes el montaje hasta comprobarlo en la documentación correspondiente.
+\end{stopbox}

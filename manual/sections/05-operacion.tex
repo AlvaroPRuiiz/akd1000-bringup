@@ -1,0 +1,150 @@
+\chapter{Operación de modelos Akida}
+\label{chap:operacion}
+
+\section{Cargar e inspeccionar un modelo}
+
+Los modelos Akida se distribuyen como archivos FBZ. Antes de ejecutarlos conviene conocer,
+al menos, la forma de entrada, la forma de salida y el preprocesado utilizado durante su
+conversión.
+
+Carga el modelo y revisa su estructura:
+
+\begin{lstlisting}[language=Python]
+import akida
+
+model = akida.Model("models/model.fbz")
+
+print("input_shape:", model.input_shape)
+print("output_shape:", model.output_shape)
+print("ip_version:", model.ip_version)
+model.summary()
+\end{lstlisting}
+
+\code{summary()} muestra las capas y la forma en la que el modelo puede ejecutarse.
+La cantidad de recursos utilizados depende del propio modelo y del modo de mapeo.
+
+\section{Seleccionar el dispositivo}
+
+Los dispositivos físicos disponibles se obtienen mediante \code{akida.devices()}
+\cite{brainchip_akida_guide}:
+
+\begin{lstlisting}[language=Python]
+import akida
+
+devices = list(akida.devices())
+
+if not devices:
+    raise RuntimeError("No se ha detectado ningun dispositivo Akida")
+
+device = devices[0]
+print(device)
+\end{lstlisting}
+
+Un dispositivo creado con \code{akida.AKD1000()} es virtual y sirve para comprobar
+el mapeo de un modelo. Para ejecutar una inferencia en la tarjeta es necesario utilizar
+uno de los dispositivos devueltos por \code{akida.devices()}.
+
+\section{Mapear el modelo en la tarjeta}
+
+Un modelo cargado puede ejecutarse inicialmente mediante software. Para utilizar la AKD1000
+debe mapearse sobre el dispositivo:
+
+\begin{lstlisting}[language=Python]
+model.map(
+    device,
+    hw_only=True,
+    mode=akida.MapMode.AllNps
+)
+
+model.summary()
+\end{lstlisting}
+
+Con \code{hw\_only=True} se exige que la ejecución se realice completamente en el hardware
+Akida \cite{brainchip_akida_guide}. Si el modelo no puede mapearse de esta forma, la llamada
+produce un error.
+
+\code{AllNps}, \code{HwPr} y \code{Minimal} son distintos modos de asignar los recursos
+de la AKD1000. Para una primera ejecución puede utilizarse \code{AllNps}. Su efecto sobre
+latencia y consumo se estudia en el \cref{chap:rendimiento}.
+
+\section{Preparar la entrada}
+
+La forma y el tipo de los datos dependen del modelo. Antes de ejecutar una inferencia,
+comprueba que la entrada coincide con \code{model.input\_shape}.
+
+Por ejemplo, para datos almacenados en NumPy:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+
+data = np.load("data/inputs.npy", allow_pickle=False)
+
+print("shape:", data.shape)
+print("dtype:", data.dtype)
+print("min/max:", data.min(), data.max())
+
+if tuple(data.shape[1:]) != tuple(model.input_shape):
+    raise ValueError(
+        f"Forma de entrada {data.shape[1:]} "
+        f"!= {model.input_shape}"
+    )
+\end{lstlisting}
+
+El tipo, el rango y el orden de los canales deben ser los mismos utilizados durante
+la preparación y conversión del modelo. No existe un rango de entrada común para todos
+los modelos Akida.
+
+En particular, el rango 0--15 utilizado por los modelos AoA del TFG pertenece a ese
+caso concreto y no debe aplicarse a otros modelos.
+
+\section{Ejecutar el modelo}
+
+La API de Akida permite ejecutar el modelo mediante \code{forward()} o \code{predict()}.
+La elección depende de cómo se haya definido la salida del modelo y de cómo se haya
+validado durante su conversión \cite{brainchip_akida_guide}.
+
+Por ejemplo:
+
+\begin{lstlisting}[language=Python]
+output = model.forward(data)
+print(output)
+\end{lstlisting}
+
+Durante una campaña de medidas debe mantenerse el mismo método de ejecución para que
+los resultados sean comparables.
+
+También puede utilizarse la herramienta incluida en este repositorio:
+
+\begin{lstlisting}[language=bash]
+akd1000-bringup run \
+  --model models/model.fbz \
+  --input data/input.npy \
+  --method forward \
+  --clock Performance \
+  --map AllNps \
+  --output outputs/raw-output.npy
+\end{lstlisting}
+
+La herramienta carga la entrada, ejecuta el modelo y guarda la salida en un archivo NumPy.
+La entrada debe tener la forma
+
+\begin{lstlisting}
+(batch, *model.input_shape)
+\end{lstlisting}
+
+Los modelos con varias entradas o salidas requieren tratarlos directamente mediante
+la API de Akida.
+
+\section{Modo de reloj}
+
+La AKD1000 dispone de los modos de reloj \code{Performance}, \code{Economy} y
+\code{LowPower}. El modo puede seleccionarse mediante la API:
+
+\begin{lstlisting}[language=Python]
+device.soc.clock_mode = akida.soc.ClockMode.Performance
+print(device.soc.clock_mode)
+\end{lstlisting}
+
+El modo de reloj debe anotarse cuando se comparen medidas de rendimiento. Un modo de menor
+potencia instantánea no implica necesariamente una menor energía por inferencia, ya que también
+puede cambiar el tiempo de ejecución.

@@ -1,0 +1,54 @@
+\chapter{Mantenimiento y actualización}
+\label{chap:mantenimiento}
+
+\section{Guardar una configuración conocida}
+
+Después de completar correctamente la primera ejecución en la tarjeta, guarda la información
+básica del entorno. Servirá como referencia si una actualización provoca algún problema.
+
+\begin{lstlisting}[language=bash]
+mkdir -p evidence/known-good
+
+akd1000-bringup doctor --json \
+  > evidence/known-good/doctor.json
+
+python -m pip freeze \
+  > evidence/known-good/pip-freeze.txt
+
+sha256sum models/*.fbz \
+  > evidence/known-good/model-hashes.txt
+\end{lstlisting}
+
+Conserva también la versión del proyecto y del controlador utilizados. Si más adelante
+el sistema deja de funcionar, esta configuración permite comparar qué ha cambiado.
+
+\section{Actualizar el entorno}
+
+Las actualizaciones del kernel, del controlador, de Python o de Akida pueden afectar al
+funcionamiento de la tarjeta. Siempre que sea posible, cambia un componente cada vez y
+repite después la prueba básica.
+
+Un procedimiento sencillo es:
+
+\begin{enumerate}
+  \item comprueba la compatibilidad de la nueva versión;
+  \item realiza la actualización;
+  \item reinicia el equipo si es necesario;
+  \item repite la detección de la tarjeta y las pruebas de software y hardware.
+\end{enumerate}
+
+Si aparece un problema, compara el sistema con la configuración guardada anteriormente
+y utiliza el procedimiento del \cref{chap:diagnostico}.
+
+El controlador utiliza DKMS para reconstruir el módulo después de una actualización del
+kernel. Esto solo funciona mientras la nueva versión del kernel siga estando soportada por
+el controlador.
+
+\section{Apagado y almacenamiento}
+
+Antes de desconectar la tarjeta, termina las ejecuciones en curso y apaga el host de forma
+normal. Después, desconecta las fuentes de alimentación antes de retirar la tarjeta o el
+cable FFC.
+
+Si el montaje va a guardarse durante un periodo largo, protege las placas frente a descargas
+electrostáticas y evita doblar o dejar bajo tensión el cable FFC.

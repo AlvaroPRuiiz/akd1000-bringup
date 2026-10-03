@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "akd1000-bringup"
+version = "1.2.2"
+description = "Minimal tools to verify and operate a BrainChip AKD1000"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+authors = [{name = "Álvaro Poveda Ruiz"}]
+license = "MIT"
+license-files = ["LICENSE.md"]
+dependencies = [
+  "numpy>=1.24,<3",
+]
+
+[project.optional-dependencies]
+reproducible = ["akida==2.19.1"]
+dev = ["ruff==0.16.9"]
+
+[project.scripts]
+akd1000-bringup = "akd1000_bringup.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "B", "SIM117", "RUF012"]

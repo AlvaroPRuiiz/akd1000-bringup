@@ -1,0 +1,4 @@
+# Reference simulator/runtime environment for this release, Python 3.11.
+# This does not recreate the complete training environment of the TFG.
+akida==2.19.1
+numpy==2.4.6

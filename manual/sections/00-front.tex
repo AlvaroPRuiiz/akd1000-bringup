@@ -1,0 +1,83 @@
+\begin{titlepage}
+  \centering
+  \vspace*{8mm}
+  {\sffamily\bfseries\color{AkidaBlue}\fontsize{26}{31}\selectfont BrainChip AKD1000\par}
+  \vspace{5mm}
+  {\sffamily\fontsize{16}{21}\selectfont
+  Manual de puesta en marcha, ejecución de modelos y diagnóstico\par}
+  \vspace{8mm}
+  {\color{AkidaCyan}\rule{0.72\textwidth}{1.1pt}\par}
+  \vspace{8mm}
+  \includegraphics[width=0.60\textwidth]{hardware-powered-isolated.png}
+  \vfill
+  {\large Álvaro Poveda Ruiz\par}
+  \vspace{2mm}
+  {\small Material complementario del Trabajo Fin de Grado\par
+  Universidad Politécnica de Madrid, 2026\par}
+  \vspace{8mm}
+  {\sffamily\small Versión \versionmanual{} · Revisión: \fechacorte\par}
+\end{titlepage}
+
+\chapter*{Resumen}
+\addcontentsline{toc}{chapter}{Resumen}
+
+Este manual describe la puesta en marcha de una tarjeta BrainChip AKD1000 conectada por PCIe.
+El procedimiento incluye la preparación del equipo, la instalación del controlador y del
+entorno de Python, la carga de un modelo y la comprobación de su ejecución. También explica
+cómo medir la latencia y localizar los fallos más habituales.
+
+La primera prueba utiliza un modelo sencillo cuya salida se conoce de antemano. Se ejecuta
+primero en software y después en la tarjeta. Así se puede comprobar por separado el
+funcionamiento del entorno de Akida, la compatibilidad del modelo y el acceso al hardware
+antes de utilizar una aplicación propia.
+
+El montaje empleado en el TFG se recoge en el apéndice~\ref{app:tfg}, junto con sus versiones
+y resultados. Las herramientas incluidas permiten repetir la prueba básica, pero no
+reproducen por sí solas el experimento AoA: sus modelos y datos no forman parte de esta entrega.
+La ejecución completa de esta versión del procedimiento en una placa física sigue pendiente.
+
+\section*{Alcance del manual}
+
+El manual cubre las operaciones necesarias para instalar el entorno, detectar la tarjeta,
+cargar y ejecutar modelos, consultar las estadísticas y realizar medidas de rendimiento.
+También incluye comprobaciones para localizar errores de conexión, controlador, datos o modelo.
+
+Las instrucciones de montaje deben aplicarse a la revisión concreta de cada componente.
+Antes de conectar la alimentación, hay que comprobar la tensión, la polaridad y la orientación
+del cable en la documentación del fabricante. El manual no cubre la reparación electrónica
+de la tarjeta ni su diseño interno.
+
+\chapter*{Cómo usar este documento}
+\addcontentsline{toc}{chapter}{Cómo usar este documento}
+
+Descarga el PDF junto con \code{akd1000-bringup.zip} y extrae el ZIP. Abre una terminal
+en la carpeta \projectroot, donde están \code{pyproject.toml}, \code{examples/} y
+\code{models/}. Todos los comandos del proyecto parten de esa carpeta, salvo que se indique otra.
+No ejecutes los ejemplos desde el visor del ZIP. Conserva el PDF y el ZIP con la misma versión.
+
+Los recuadros azules indican decisiones; los amarillos, precauciones; los rojos, condiciones
+de parada; y los verdes, datos del TFG. Ejecuta solo el bloque que corresponda a tu equipo.
+Los bloques que usan \code{sudo}, \code{apt} o \code{lspci} son para Linux. El
+\cref{chap:software} incluye la activación del entorno en Windows.
+
+Si trabajas sin tarjeta, empieza por el \cref{chap:software} y completa la prueba en software.
+Si dispones del hardware, lee primero el inventario y el montaje de los capítulos
+\ref{chap:orientacion} y \ref{chap:hardware}; después prepara el controlador y el SDK.
+
+\section*{Versión y material incluido}
+
+\begin{tabularx}{\textwidth}{@{}L{0.29\textwidth}Y@{}}
+\toprule
+\textbf{Campo} & \textbf{Valor} \\
+\midrule
+Versión y fecha & \versionmanual{}; \fechacorte \\
+Fuente editable & \code{manual/main.tex} y \code{manual/sections/} \\
+Referencia del TFG & Python 3.11.2 y Akida 2.19.1; apéndice~\ref{app:tfg} \\
+Pruebas de esta edición & Pruebas automatizadas y simulador con Akida 2.19.1 y 2.19.3 en Windows; ejecución física pendiente \\
+Modelo incluido & \code{models/akida\_v1\_smoke\_test.fbz}; cuatro entradas y dos salidas, sin datos AoA \\
+\bottomrule
+\end{tabularx}
+
+Las referencias finales contienen enlaces a las instrucciones oficiales. La ruta de software
+actual y la compatibilidad del controlador se comprueban por separado: que un SDK se instale
+no garantiza que el kernel pueda cargar el driver PCIe.

@@ -1,0 +1,156 @@
+\chapter{Entorno de software y primera prueba}
+\label{chap:software}
+
+\section{Preparar el entorno}
+
+BrainChip distribuye las herramientas de Akida mediante MetaTF. En la versión utilizada
+para este manual, la instalación actual emplea \code{metatf==2.19.3} y admite
+Python 3.10--3.12 \cite{brainchip_install_2193}.
+
+El repositorio también incluye una configuración de referencia basada en Python 3.11
+y Akida 2.19.1, la misma versión utilizada durante el TFG. Esta segunda opción permite
+repetir la prueba básica con un entorno conocido.
+
+Abre una terminal en \projectroot, la carpeta extraída del ZIP.
+
+En Linux:
+
+\begin{lstlisting}[language=bash]
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+\end{lstlisting}
+
+En Windows, PowerShell:
+
+\begin{lstlisting}
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+\end{lstlisting}
+
+El entorno virtual solo se crea una vez. En una terminal nueva basta con volver a
+activarlo antes de continuar.
+
+\section{Instalar Akida}
+
+Puedes utilizar una de las dos configuraciones siguientes.
+
+Para trabajar con la versión actual documentada por BrainChip:
+
+\begin{lstlisting}
+python -m pip install "metatf==2.19.3"
+\end{lstlisting}
+
+Para repetir la configuración de referencia incluida con el repositorio:
+
+\begin{lstlisting}
+python -m pip install -r requirements/reproducible.txt
+\end{lstlisting}
+
+No mezcles ambas instalaciones en el mismo entorno virtual.
+
+A continuación, instala las herramientas incluidas con este repositorio:
+
+\begin{lstlisting}
+python -m pip install -e . --no-deps
+python -m pip check
+\end{lstlisting}
+
+Comprueba que Akida se importa correctamente:
+
+\begin{lstlisting}
+python -c "import akida; print(akida.__version__); print(akida.devices())"
+\end{lstlisting}
+
+Si no hay una tarjeta conectada, es normal que \code{akida.devices()} devuelva
+\code{[]}. Si el equipo tiene una AKD1000 conectada y el controlador está funcionando,
+debe aparecer al menos un dispositivo.
+
+\section{Primera prueba en software}
+
+Antes de utilizar la tarjeta, ejecuta el modelo de prueba incluido con el repositorio:
+
+\begin{lstlisting}
+python examples/00_simulator_smoke.py
+\end{lstlisting}
+
+El modelo recibe cuatro valores de entrada. Para
+
+\begin{lstlisting}
+[3, 2, 1, 4]
+\end{lstlisting}
+
+la salida esperada es
+
+\begin{lstlisting}
+[5, 5]
+\end{lstlisting}
+
+El script ejecuta primero el modelo en software y comprueba después que puede mapearse
+sobre un AKD1000 virtual. Este último paso verifica la compatibilidad del modelo con la
+arquitectura de la tarjeta, pero no utiliza hardware físico.
+
+También puedes ejecutar la comprobación incluida en la herramienta del repositorio:
+
+\begin{lstlisting}
+akd1000-bringup verify --id smoke --model models/akida_v1_smoke_test.fbz
+\end{lstlisting}
+
+Si ambas pruebas terminan correctamente, el entorno de Python y el modelo de prueba
+están preparados.
+
+\section{Comprobar el equipo}
+
+Antes de utilizar la tarjeta física puede ejecutarse el diagnóstico incluido con el
+repositorio:
+
+\begin{lstlisting}
+akd1000-bringup doctor
+\end{lstlisting}
+
+Para guardar el resultado:
+
+\begin{lstlisting}
+mkdir -p evidence
+akd1000-bringup doctor --json > evidence/preflight.json
+\end{lstlisting}
+
+La herramienta comprueba, entre otros datos, la versión de Akida, el kernel, la conexión
+PCIe y los dispositivos detectados. Su salida sirve principalmente para localizar dónde
+se encuentra un problema si la tarjeta no aparece.
+
+En un equipo sin AKD1000 es normal que el diagnóstico indique que no se ha encontrado
+ningún dispositivo.
+
+\section{Primera ejecución en la AKD1000}
+
+Esta prueba requiere que la tarjeta haya sido detectada por PCIe y que el controlador
+del \cref{chap:host-driver} esté instalado.
+
+Comprueba primero que Akida detecta el dispositivo:
+
+\begin{lstlisting}
+akida devices
+\end{lstlisting}
+
+Después ejecuta:
+
+\begin{lstlisting}
+python examples/01_hardware_smoke.py
+\end{lstlisting}
+
+El script carga el mismo modelo utilizado en la prueba de software, lo mapea sobre la
+AKD1000 y ejecuta la entrada conocida. La salida debe volver a ser:
+
+\begin{lstlisting}
+[5, 5]
+\end{lstlisting}
+
+Un resultado \code{PASS} confirma que el modelo se ha cargado, que la tarjeta es
+accesible desde Akida y que la inferencia se ha ejecutado correctamente en el hardware.
+
+\begin{stopbox}{Si la prueba física falla}
+No continúes todavía con un modelo propio. Conserva el mensaje de error y utiliza el
+procedimiento de diagnóstico del \cref{chap:diagnostico} para localizar el problema.
+\end{stopbox}

@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "models": {
+    "smoke": {
+      "architecture": "4 -> 2 deterministic pair sums",
+      "filename": "akida_v1_smoke_test.fbz",
+      "source_script": "examples/00_simulator_smoke.py",
+      "size_bytes": 974,
+      "sha256": "ae5bc251ac1fa6a9665bf5df746f616a4d5c31b58a2201031fc4570d5a5501a4",
+      "ip_version": "IpVersion.v1",
+      "status": "included; deterministic deployment test; not an application model"
+    }
+  }
+}
