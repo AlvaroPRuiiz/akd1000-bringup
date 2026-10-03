@@ -3,7 +3,7 @@
 This repository does not vendor the BrainChip Akida SDK, CNN2SNN, QuantizeML, TensorFlow
 or their binaries. They are installed separately under their respective terms.
 
-The runtime was validated in the TFG with Akida 2.19.1. The package metadata identifies the
+The reference runtime uses Akida 2.19.1. The package metadata identifies the
 Akida execution engine as proprietary. Review BrainChip's current developer terms before
 redistributing SDK material or using the tooling outside the licensed environment.
 

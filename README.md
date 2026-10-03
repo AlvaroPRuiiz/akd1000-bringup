@@ -7,6 +7,8 @@ Pi 5 with a compatible FFC-to-PCIe adapter; software checks also run on Windows.
 
 The project grew out of the hardware deployment work for
 a Telecommunications Engineering final degree project at Universidad Politécnica de Madrid.
+The AoA model-conversion pipeline and experimental results are documented separately
+in [akida-model-deployment-pipeline](https://github.com/AlvaroPRuiiz/akida-model-deployment-pipeline).
 
 ## Documentation
 
@@ -63,7 +65,7 @@ Build the manual with `python manual/build.py` (XeLaTeX and BibTeX required).
 ## Limitations
 
 The revised physical procedure and a complete session with a new user remain pending.
-Thesis AoA models, datasets and checkpoints are not distributed. SDK power statistics
+SDK power statistics
 do not measure total system consumption; benchmark timings include host overhead.
 Driver compatibility must be checked against the actual Linux kernel and SDK.
 No CPU, GPU or FPGA speedup claim is made by this toolkit.

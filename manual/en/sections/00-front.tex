@@ -10,7 +10,7 @@
   \vfill
   {\large Álvaro Poveda Ruiz\par}
   \vspace{2mm}
-  {\small Supplementary material for the Bachelor's Thesis (TFG)\par
+  {\small User manual\par
   Universidad Politécnica de Madrid, 2026\par}
   \vspace{8mm}
   {\small Version \versionmanual{} · Revision: \fechacorte\par}
@@ -28,10 +28,7 @@ The first test uses a simple model with a known output. It runs in software firs
 and then on the board. This checks the Akida environment, model compatibility and
 hardware access separately before running your own application.
 
-Appendix~\ref{app:tfg} documents the thesis setup, software versions and results.
-The included tools can repeat the smoke test, but do not reproduce the AoA experiment
-on their own: its models and data are not part of this release. A complete run of this
-version of the procedure on a physical board remains pending.
+Physical execution of the complete revised procedure remains pending.
 
 \section*{Scope}
 
@@ -69,9 +66,8 @@ With hardware available, first read the inventory and assembly steps in chapters
 \midrule
 Version and date & \versionmanual{}; \fechacorte \\
 Editable source & \code{manual/main.tex} and \code{manual/sections/} \\
-Thesis reference & Python 3.11.2 and Akida 2.19.1; appendix~\ref{app:tfg} \\
 Tests for this edition & Automated tests and simulator with Akida 2.19.1 and 2.19.3 on Windows; physical execution pending \\
-Included model & \code{models/akida\_v1\_smoke\_test.fbz}; four inputs and two outputs, no AoA data \\
+Included model & \code{models/akida\_v1\_smoke\_test.fbz}; four inputs and two outputs \\
 \bottomrule
 \end{tabularx}
 

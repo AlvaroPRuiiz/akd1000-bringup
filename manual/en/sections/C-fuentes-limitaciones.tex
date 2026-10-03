@@ -1,16 +1,13 @@
 \chapter{Sources and limitations}
-\label{app:fuentes-limitaciones}
+\label{app:fuentes}
 
-The instructions in this manual are based mainly on official BrainChip, Raspberry Pi
-and Waveshare documentation, together with the thesis report and files.
+The instructions are based on official BrainChip, Raspberry Pi and Waveshare documentation.
+The repository's reference environment uses Akida 2.19.1; the documented MetaTF route
+uses 2.19.3. Check driver compatibility against your kernel and SDK.
+A complete session with a new user and a physical board remains pending.
 
-The reference environment uses Akida 2.19.1, while the current documentation consulted
-for this manual corresponds to MetaTF 2.19.3. Check PCIe driver compatibility before
-using later kernel or SDK versions.
+API power readings do not measure total system consumption.
+The manual does not cover \emph{edge learning} or Akida Engine.
 
-This edition has not yet been validated through a complete session with a new user
-and physical access to the board. Reproducing the AoA case also requires the original
-models and data, which are not part of this release.
-
-Power measurements from the Akida API do not represent total system consumption.
-The manual also excludes features such as \emph{edge learning} and Akida Engine.
+The AoA model-conversion pipeline and its experimental results are documented separately
+in \href{https://github.com/AlvaroPRuiiz/akida-model-deployment-pipeline}{\code{akida-model-deployment-pipeline}}.
