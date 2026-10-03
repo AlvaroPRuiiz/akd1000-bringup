@@ -13,7 +13,7 @@
   {\small User manual\par
   Universidad Politécnica de Madrid, 2026\par}
   \vspace{8mm}
-  {\small Version \versionmanual{} · Revision: \fechacorte\par}
+  {\small Version \versionmanual{} · Revision: \fecharevision\par}
 \end{titlepage}
 
 \chapter*{Abstract}
@@ -44,11 +44,11 @@ the scope of this manual.
 \chapter*{How to use this document}
 \addcontentsline{toc}{chapter}{How to use this document}
 
-Download the PDF together with \code{akd1000-bringup.zip} and extract the ZIP.
+Clone the repository or download and extract the source ZIP from GitHub.
 Open a terminal in \projectroot, which contains \code{pyproject.toml},
 \code{examples/} and \code{models/}. All project commands start from this directory
 unless another location is specified. Do not run the examples from the ZIP viewer.
-Keep the PDF and ZIP at the same version.
+Use the PDF for the same version as the code.
 
 Run only the block for your host. Blocks that use
 \code{sudo}, \code{apt} or \code{lspci} are for Linux. \Cref{chap:software}
@@ -64,9 +64,9 @@ With hardware available, first read the inventory and assembly steps in chapters
 \toprule
 \textbf{Field} & \textbf{Value} \\
 \midrule
-Version and date & \versionmanual{}; \fechacorte \\
-Editable source & \code{manual/main.tex} and \code{manual/sections/} \\
-Tests for this edition & Automated tests and simulator with Akida 2.19.1 and 2.19.3 on Windows; physical execution pending \\
+Version and date & \versionmanual{}; \fecharevision \\
+Editable source & \code{manual/en/main.tex} and \code{manual/en/sections/} \\
+Tests for this edition & Automated tests and simulator runs with Akida 2.19.1 and 2.19.3; physical execution pending \\
 Included model & \code{models/akida\_v1\_smoke\_test.fbz}; four inputs and two outputs \\
 \bottomrule
 \end{tabularx}

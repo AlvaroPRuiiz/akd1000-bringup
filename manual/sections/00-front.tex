@@ -13,7 +13,7 @@
   {\small Manual de usuario\par
   Universidad Politécnica de Madrid, 2026\par}
   \vspace{8mm}
-  {\small Versión \versionmanual{} · Revisión: \fechacorte\par}
+  {\small Versión \versionmanual{} · Revisión: \fecharevision\par}
 \end{titlepage}
 
 \chapter*{Resumen}
@@ -45,10 +45,10 @@ de la tarjeta ni su diseño interno.
 \chapter*{Cómo usar este documento}
 \addcontentsline{toc}{chapter}{Cómo usar este documento}
 
-Descarga el PDF junto con \code{akd1000-bringup.zip} y extrae el ZIP. Abre una terminal
+Clona el repositorio o descarga y extrae el ZIP de código fuente de GitHub. Abre una terminal
 en la carpeta \projectroot, donde están \code{pyproject.toml}, \code{examples/} y
 \code{models/}. Todos los comandos del proyecto parten de esa carpeta, salvo que se indique otra.
-No ejecutes los ejemplos desde el visor del ZIP. Conserva el PDF y el ZIP con la misma versión.
+No ejecutes los ejemplos desde el visor del ZIP. Usa el PDF de la misma versión que el código.
 
 Ejecuta solo el bloque que corresponda a tu equipo.
 Los bloques que usan \code{sudo}, \code{apt} o \code{lspci} son para Linux. El
@@ -64,9 +64,9 @@ Si dispones del hardware, lee primero el inventario y el montaje de los capítul
 \toprule
 \textbf{Campo} & \textbf{Valor} \\
 \midrule
-Versión y fecha & \versionmanual{}; \fechacorte \\
+Versión y fecha & \versionmanual{}; \fecharevision \\
 Fuente editable & \code{manual/main.tex} y \code{manual/sections/} \\
-Pruebas de esta edición & Pruebas automatizadas y simulador con Akida 2.19.1 y 2.19.3 en Windows; ejecución física pendiente \\
+Pruebas de esta edición & Pruebas automatizadas y simulador con Akida 2.19.1 y 2.19.3; ejecución física pendiente \\
 Modelo incluido & \code{models/akida\_v1\_smoke\_test.fbz}; cuatro entradas y dos salidas \\
 \bottomrule
 \end{tabularx}

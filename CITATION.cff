@@ -1,14 +1,14 @@
 cff-version: 1.2.0
-message: "If you use this deployment workflow, please cite the repository and the associated Bachelor's Thesis."
-title: "BrainChip AKD1000 Bring-up: A Minimal and Traceable Workflow"
+message: "If you use this repository, please cite it."
+title: "AKD1000 Bring-up and Benchmarking Toolkit"
 type: software
 authors:
   - family-names: "Poveda Ruiz"
     given-names: "Álvaro"
-version: 1.2.2
-date-released: 2026-09-29
+version: 1.2.3
+date-released: 2026-10-03
 license: MIT
 abstract: >-
-  Application-neutral deployment and validation utilities for BrainChip AKD1000, derived
-  from the Bachelor's Thesis Aceleración y despliegue de redes neuronales mediante hardware
-  neuromórfico para procesado radar, Universidad Politécnica de Madrid, 2026.
+  Utilities and bilingual documentation for BrainChip AKD1000 PCIe bring-up,
+  smoke testing and FBZ benchmarking. Developed from the hardware deployment
+  work of a Bachelor's Thesis at Universidad Politécnica de Madrid.

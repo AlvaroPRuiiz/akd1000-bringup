@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "akd1000-bringup"
-version = "1.2.2"
+version = "1.2.3"
 description = "Minimal tools to verify and operate a BrainChip AKD1000"
 readme = "README.md"
 requires-python = ">=3.10,<3.13"

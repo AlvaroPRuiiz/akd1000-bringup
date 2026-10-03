@@ -27,7 +27,7 @@ class BenchmarkTests(unittest.TestCase):
             ip_version="IpVersion.v1",
         )
         mapped = MappedModel(FakeModel(), device, "Performance", "AllNps")
-        inputs = np.arange(6, dtype=np.float32).reshape(3, 2)
+        inputs = np.arange(6, dtype=np.uint8).reshape(3, 2)
         summary, rows = run_benchmark(mapped, inputs, warmup=1, repetitions=2)
         self.assertEqual(summary["samples"], 3)
         self.assertEqual(summary["method"], "forward")
@@ -42,7 +42,7 @@ class BenchmarkTests(unittest.TestCase):
     def test_benchmark_rejects_wrong_sample_shape(self):
         mapped = MappedModel(FakeModel(), SimpleNamespace(), "Performance", "AllNps")
         with self.assertRaisesRegex(ValueError, "model.input_shape"):
-            run_benchmark(mapped, np.zeros((3, 1), dtype=np.float32))
+            run_benchmark(mapped, np.zeros((3, 1), dtype=np.uint8))
 
 
 if __name__ == "__main__":

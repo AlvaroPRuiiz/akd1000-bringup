@@ -88,11 +88,13 @@ def map_model(
 
 
 def run_raw(mapped: MappedModel, inputs: np.ndarray, method: str = "forward") -> np.ndarray:
-    """Execute one numeric input tensor and return one numeric output tensor unchanged."""
+    """Execute one uint8 input tensor and return the numeric output unchanged."""
 
     values = np.asarray(inputs)
-    if values.size == 0 or not np.issubdtype(values.dtype, np.number):
-        raise ValueError("Inputs must be a non-empty numeric array.")
+    if values.size == 0:
+        raise ValueError("Inputs must be a non-empty array.")
+    if values.dtype != np.uint8:
+        raise TypeError(f"Akida model inputs must use uint8, got {values.dtype}.")
     expected_sample_shape = tuple(mapped.model.input_shape)
     if values.ndim < 1 or tuple(values.shape[1:]) != expected_sample_shape:
         raise ValueError(

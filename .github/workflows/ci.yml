@@ -42,3 +42,22 @@ jobs:
         run: akd1000-bringup verify --id smoke --model models/akida_v1_smoke_test.fbz
       - name: Simulator and virtual mapping
         run: python examples/00_simulator_smoke.py
+
+  reproducible:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: README quick start
+        run: |
+          python3.11 -m venv .venv
+          source .venv/bin/activate
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements/reproducible.txt
+          python -m pip install -e . --no-deps
+          python -m pip check
+          akd1000-bringup verify --id smoke --model models/akida_v1_smoke_test.fbz
+          python examples/00_simulator_smoke.py

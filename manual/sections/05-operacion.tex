@@ -69,8 +69,10 @@ latencia y consumo se estudia en el \cref{chap:rendimiento}.
 
 \section{Preparar la entrada}
 
-La forma y el tipo de los datos dependen del modelo. Antes de ejecutar una inferencia,
-comprueba que la entrada coincide con \code{model.input\_shape}.
+La entrada debe proporcionarse como un tensor NumPy \code{uint8}. La forma, el rango
+efectivo y el orden de los canales deben coincidir con los utilizados durante
+la conversión del modelo. Comprueba la forma de cada muestra con
+\code{model.input\_shape}.
 
 Por ejemplo, para datos almacenados en NumPy:
 
@@ -83,6 +85,9 @@ print("shape:", data.shape)
 print("dtype:", data.dtype)
 print("min/max:", data.min(), data.max())
 
+if data.dtype != np.uint8:
+    raise TypeError("La entrada debe usar uint8")
+
 if tuple(data.shape[1:]) != tuple(model.input_shape):
     raise ValueError(
         f"Forma de entrada {data.shape[1:]} "
@@ -90,9 +95,8 @@ if tuple(data.shape[1:]) != tuple(model.input_shape):
     )
 \end{lstlisting}
 
-El tipo, el rango y el orden de los canales deben ser los mismos utilizados durante
-la preparación y conversión del modelo. No existe un rango de entrada común para todos
-los modelos Akida.
+El rango efectivo depende de la precisión de entrada del modelo. La herramienta
+rechaza otros tipos de datos y no los convierte automáticamente a \code{uint8}.
 
 
 \section{Ejecutar el modelo}
@@ -111,6 +115,7 @@ print(output)
 Durante una campaña de medidas debe mantenerse el mismo método de ejecución para que
 los resultados sean comparables.
 
+\pagebreak
 También puedes usar la herramienta incluida en este repositorio:
 
 \begin{lstlisting}[language=bash]

@@ -17,12 +17,13 @@ in [akida-model-deployment-pipeline](https://github.com/AlvaroPRuiiz/akida-model
 
 ## Quick start
 
-Download the repository ZIP from GitHub, extract it and open a terminal in the
-directory containing `pyproject.toml`. On Linux, with Python 3.11:
+Clone the repository or download the source ZIP from GitHub, then open a terminal
+in the directory containing `pyproject.toml`. On Linux, with Python 3.11:
 
 ```bash
 python3.11 -m venv .venv
 source .venv/bin/activate
+python -m pip install --upgrade pip
 python -m pip install -r requirements/reproducible.txt
 python -m pip install -e . --no-deps
 python -m pip check
@@ -49,7 +50,7 @@ akd1000-bringup benchmark --help
 
 `run` preserves the numeric model output. `benchmark` records serial,
 host-observed latency and writes timing and provenance files under `outputs/`.
-Provide your own FBZ and input data with the model's required shape and preprocessing.
+Provide your own FBZ and `uint8` inputs with the model's required shape, range and preprocessing.
 
 ## Repository
 
@@ -68,9 +69,6 @@ The revised physical procedure and a complete session with a new user remain pen
 SDK power statistics
 do not measure total system consumption; benchmark timings include host overhead.
 Driver compatibility must be checked against the actual Linux kernel and SDK.
-No CPU, GPU or FPGA speedup claim is made by this toolkit.
 
 Original content retains its MIT license. BrainChip's SDK and PCIe driver are not
 redistributed; see [third-party notices](THIRD_PARTY_NOTICES.md).
-Contributor checks are in [CONTRIBUTING.md](CONTRIBUTING.md);
-figure provenance is in [docs/assets/README.md](docs/assets/README.md).

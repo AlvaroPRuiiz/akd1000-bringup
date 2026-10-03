@@ -32,7 +32,7 @@ import akida
 devices = list(akida.devices())
 
 if not devices:
-    raise RuntimeError("No se ha detectado ningun dispositivo Akida")
+    raise RuntimeError("No Akida device detected")
 
 device = devices[0]
 print(device)
@@ -64,8 +64,9 @@ its effect on latency and power consumption.
 
 \section{Prepare the input}
 
-The data shape and type depend on the model. Before inference, check that the input
-matches \code{model.input\_shape}.
+Provide the input as a NumPy \code{uint8} tensor. Its shape, effective range and
+channel order must match those used during model conversion. Check each sample
+shape against \code{model.input\_shape}.
 
 For example, for data stored in NumPy:
 
@@ -78,15 +79,18 @@ print("shape:", data.shape)
 print("dtype:", data.dtype)
 print("min/max:", data.min(), data.max())
 
+if data.dtype != np.uint8:
+    raise TypeError("Akida model inputs must use uint8")
+
 if tuple(data.shape[1:]) != tuple(model.input_shape):
     raise ValueError(
-        f"Forma de entrada {data.shape[1:]} "
+        f"Input shape {data.shape[1:]} "
         f"!= {model.input_shape}"
     )
 \end{lstlisting}
 
-The data type, range and channel order must match those used when preparing and
-converting the model. There is no input range common to all Akida models.
+The effective range depends on the model input precision. The tool rejects other
+data types without automatically converting them to \code{uint8}.
 
 
 \section{Run the model}
@@ -105,6 +109,7 @@ print(output)
 Keep the same execution method throughout a measurement campaign so that the results
 are comparable.
 
+\pagebreak
 You can also use the tool included in this repository:
 
 \begin{lstlisting}[language=bash]
