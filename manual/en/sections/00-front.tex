@@ -1,12 +1,10 @@
 \begin{titlepage}
   \centering
   \vspace*{8mm}
-  {\sffamily\bfseries\color{AkidaBlue}\fontsize{26}{31}\selectfont BrainChip AKD1000\par}
+  {\bfseries\fontsize{26}{31}\selectfont BrainChip AKD1000\par}
   \vspace{5mm}
-  {\sffamily\fontsize{16}{21}\selectfont
+  {\fontsize{16}{21}\selectfont
   Bring-up, model execution and troubleshooting manual\par}
-  \vspace{8mm}
-  {\color{AkidaCyan}\rule{0.72\textwidth}{1.1pt}\par}
   \vspace{8mm}
   \includegraphics[width=0.60\textwidth]{hardware-powered-isolated.png}
   \vfill
@@ -15,11 +13,11 @@
   {\small Supplementary material for the Bachelor's Thesis (TFG)\par
   Universidad Politécnica de Madrid, 2026\par}
   \vspace{8mm}
-  {\sffamily\small Version \versionmanual{} · Revision: \fechacorte\par}
+  {\small Version \versionmanual{} · Revision: \fechacorte\par}
 \end{titlepage}
 
-\chapter*{Summary}
-\addcontentsline{toc}{chapter}{Summary}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
 
 This manual describes the bring-up of a BrainChip AKD1000 board connected over PCIe.
 The procedure covers host preparation, driver and Python environment installation,
@@ -55,8 +53,7 @@ Open a terminal in \projectroot, which contains \code{pyproject.toml},
 unless another location is specified. Do not run the examples from the ZIP viewer.
 Keep the PDF and ZIP at the same version.
 
-Blue boxes indicate decisions; yellow boxes, precautions; red boxes, stop conditions;
-and green boxes, thesis data. Run only the block for your host. Blocks that use
+Run only the block for your host. Blocks that use
 \code{sudo}, \code{apt} or \code{lspci} are for Linux. \Cref{chap:software}
 includes environment activation on Windows.
 

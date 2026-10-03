@@ -10,7 +10,7 @@
 \setsansfont{Latin Modern Sans}
 \setmonofont{Latin Modern Mono}[Scale=0.88,BoldFont={Latin Modern Mono}]
 \usepackage{geometry}
-\geometry{top=24mm,bottom=25mm,left=25mm,right=23mm,headsep=7mm,footskip=12mm}
+\geometry{top=25mm,bottom=26mm,left=26mm,right=26mm,headsep=7mm,footskip=12mm}
 \usepackage{microtype}
 \usepackage{graphicx}
 \graphicspath{{\manualassetpath}}
@@ -20,7 +20,7 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \usepackage{etoolbox,needspace,xurl}
-\usepackage[most]{tcolorbox}
+\usepackage{tikz}
 \usepackage{caption,subcaption}
 \usepackage{float}
 \usepackage{scrhack}
@@ -55,20 +55,9 @@
 
 \fi
 
-\definecolor{AkidaBlue}{HTML}{153B5B}
-\definecolor{AkidaCyan}{HTML}{007F8B}
-\definecolor{AkidaGreen}{HTML}{2C7A62}
-\definecolor{AkidaAmber}{HTML}{A86400}
-\definecolor{AkidaRed}{HTML}{A23832}
-\definecolor{AkidaInk}{HTML}{1E2933}
-\definecolor{AkidaPale}{HTML}{F3F7F8}
-\definecolor{CodeBG}{HTML}{F5F6F7}
 
 \hypersetup{
-  colorlinks=true,
-  linkcolor=AkidaBlue,
-  citecolor=AkidaGreen,
-  urlcolor=AkidaCyan,
+  hidelinks,
   pdftitle={\manualtitle},
   pdfauthor={Álvaro Poveda Ruiz},
   pdfsubject={\manualsubject},
@@ -76,7 +65,9 @@
 }
 
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{0.48em}
+\setlength{\parskip}{0.35em}
+\linespread{1.03}
+\raggedbottom
 \widowpenalty=10000
 \clubpenalty=10000
 \displaywidowpenalty=10000
@@ -85,24 +76,24 @@
 \renewcommand{\arraystretch}{1.16}
 \newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
 \newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
-\captionsetup{font=small,labelfont={bf,color=AkidaBlue}}
-\addtokomafont{chapter}{\color{AkidaBlue}\sffamily}
-\addtokomafont{section}{\color{AkidaBlue}\sffamily}
-\addtokomafont{subsection}{\color{AkidaCyan}\sffamily}
+\captionsetup{font=small,labelfont=bf,justification=justified,singlelinecheck=false}
+\setkomafont{disposition}{\normalfont\bfseries}
+\RedeclareSectionCommand[beforeskip=0pt,afterskip=18pt,font=\normalfont\Large\bfseries]{chapter}
+\RedeclareSectionCommand[beforeskip=2ex,afterskip=0.8ex,font=\normalfont\large\bfseries]{section}
+\RedeclareSectionCommand[beforeskip=1.5ex,afterskip=0.6ex,font=\normalfont\normalsize\bfseries]{subsection}
+\RedeclareSectionCommand[beforeskip=1ex,afterskip=-0.7em,font=\normalfont\normalsize\bfseries]{paragraph}
 
 \clearpairofpagestyles
-\ihead{\small\sffamily\manualheader}
-\ohead{\small\sffamily\leftmark}
-\cfoot{\small\sffamily\thepage}
-\setkomafont{pageheadfoot}{\color{AkidaInk}}
+\ihead{\small\manualheader}
+\ohead{\small\leftmark}
+\cfoot{\small\thepage}
+\setkomafont{pageheadfoot}{\normalfont\small}
 \pagestyle{scrheadings}
 
 \lstdefinestyle{terminal}{
-  basicstyle=\ttfamily\footnotesize,
-  backgroundcolor=\color{CodeBG},
-  frame=single,
-  rulecolor=\color{black!15},
-  framerule=0.4pt,
+  basicstyle=\ttfamily\small,
+  backgroundcolor=\color{black!3},
+  frame=none,
   breaklines=true,
   breakatwhitespace=false,
   columns=fullflexible,
@@ -112,35 +103,15 @@
   xleftmargin=0.6em,
   xrightmargin=0.6em,
   aboveskip=0.5em,
-  belowskip=0.7em
+  belowskip=0.6em
 }
 \lstset{style=terminal}
 % Keep each executable block on one page.
 \BeforeBeginEnvironment{lstlisting}{\par\begin{minipage}{\linewidth}}
 \AfterEndEnvironment{lstlisting}{\end{minipage}\par}
-\preto\section{\Needspace{7\baselineskip}}
-\preto\subsection{\Needspace{6\baselineskip}}
+\preto\section{\Needspace{5\baselineskip}}
+\preto\subsection{\Needspace{4\baselineskip}}
 
-\newtcolorbox{decisionbox}[1]{
-  enhanced,breakable,colback=AkidaPale,colframe=AkidaBlue,
-  boxrule=0.7pt,arc=1.2mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm,
-  title={#1},fonttitle=\bfseries\sffamily
-}
-\newtcolorbox{warningbox}[1]{
-  enhanced,breakable,colback=AkidaAmber!6,colframe=AkidaAmber,
-  boxrule=0.7pt,arc=1.2mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm,
-  title={#1},fonttitle=\bfseries\sffamily
-}
-\newtcolorbox{stopbox}[1]{
-  enhanced,breakable,colback=AkidaRed!5,colframe=AkidaRed,
-  boxrule=0.8pt,arc=1.2mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm,
-  title={#1},fonttitle=\bfseries\sffamily
-}
-\newtcolorbox{tfgevidence}[1]{
-  enhanced,breakable,colback=AkidaGreen!5,colframe=AkidaGreen,
-  boxrule=0.7pt,arc=1.2mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm,
-  title={\thesiscase: #1},fonttitle=\bfseries\sffamily
-}
 \newcommand{\code}[1]{\texttt{#1}}
 \newcommand{\versionmanual}{1.2.2}
 \ifdefined\englishmanual

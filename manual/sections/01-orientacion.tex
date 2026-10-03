@@ -34,28 +34,28 @@ latencia, energía o utilización para cualquier red.
 
 \section{Tres decisiones antes de empezar}
 
-\begin{decisionbox}{Decisión 1: software o hardware}
+\paragraph{Decisión 1: software o hardware.}
 Si aún no tienes una tarjeta, sigue la ruta \textbf{S}: entorno software, modelo de prueba y
 dispositivo virtual. Si tienes la tarjeta y una conexión PCIe documentada, completa primero la
 ruta S y continúa con la ruta \textbf{H}. La simulación confirma el modelo y el paquete; no
 confirma el cableado, el controlador ni la placa.
-\end{decisionbox}
 
-\begin{decisionbox}{Decisión 2: entorno actual o de referencia}
+
+\paragraph{Decisión 2: entorno actual o de referencia.}
 Para aprender con la documentación vigente usa la ruta \textbf{A}: MetaTF 2.19.3, o la versión
 que figure en la página oficial cuando leas el manual. Para repetir la prueba incluida usa la ruta
 \textbf{R}: Python 3.11 y Akida 2.19.1. Esta ruta no reproduce el experimento AoA completo.
 No mezcles ambas instalaciones
 en el mismo entorno virtual.
-\end{decisionbox}
 
-\begin{decisionbox}{Decisión 3: tipo de host}
+
+\paragraph{Decisión 3: tipo de host.}
 Un PC Linux con ranura PCIe y una Raspberry Pi 5 con adaptador FFC requieren montajes distintos.
 Windows está incluido en las configuraciones software actuales de MetaTF
 \cite{brainchip_install_2193}, pero este manual no afirma soporte de la tarjeta física en
 Windows: las instrucciones del controlador PCIe público consultado son para Linux
 \cite{brainchip_driver}.
-\end{decisionbox}
+
 
 \section{Matriz de rutas}
 

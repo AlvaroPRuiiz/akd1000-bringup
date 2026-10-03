@@ -35,27 +35,27 @@ of latency, energy or resource utilization for every network.
 
 \section{Three decisions before you start}
 
-\begin{decisionbox}{Decision 1: software or hardware}
+\paragraph{Decision 1: software or hardware.}
 Without a board, follow route \textbf{S}: software environment, test model and virtual
 device. With a board and a documented PCIe connection, complete route S first, then
 continue with route \textbf{H}. Simulation checks the model and package; it does not
 check the cabling, driver or board.
-\end{decisionbox}
 
-\begin{decisionbox}{Decision 2: current or reference environment}
+
+\paragraph{Decision 2: current or reference environment.}
 To learn with the current documentation, use route \textbf{A}: MetaTF 2.19.3, or the
 version listed on the official page when you read this manual. To repeat the included
 test, use route \textbf{R}: Python 3.11 and Akida 2.19.1. This route does not reproduce
 the complete AoA experiment. Do not combine both installations in one virtual environment.
-\end{decisionbox}
 
-\begin{decisionbox}{Decision 3: host type}
+
+\paragraph{Decision 3: host type.}
 A Linux PC with a PCIe slot and a Raspberry Pi 5 with an FFC adapter need different
 assemblies. Windows is included in the current MetaTF software configurations
 \cite{brainchip_install_2193}, but this manual does not claim physical board support
 on Windows: the public PCIe driver instructions consulted are for Linux
 \cite{brainchip_driver}.
-\end{decisionbox}
+
 
 \section{Workflow matrix}
 

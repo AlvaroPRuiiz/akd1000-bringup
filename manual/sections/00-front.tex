@@ -1,12 +1,10 @@
 \begin{titlepage}
   \centering
   \vspace*{8mm}
-  {\sffamily\bfseries\color{AkidaBlue}\fontsize{26}{31}\selectfont BrainChip AKD1000\par}
+  {\bfseries\fontsize{26}{31}\selectfont BrainChip AKD1000\par}
   \vspace{5mm}
-  {\sffamily\fontsize{16}{21}\selectfont
+  {\fontsize{16}{21}\selectfont
   Manual de puesta en marcha, ejecución de modelos y diagnóstico\par}
-  \vspace{8mm}
-  {\color{AkidaCyan}\rule{0.72\textwidth}{1.1pt}\par}
   \vspace{8mm}
   \includegraphics[width=0.60\textwidth]{hardware-powered-isolated.png}
   \vfill
@@ -15,7 +13,7 @@
   {\small Material complementario del Trabajo Fin de Grado\par
   Universidad Politécnica de Madrid, 2026\par}
   \vspace{8mm}
-  {\sffamily\small Versión \versionmanual{} · Revisión: \fechacorte\par}
+  {\small Versión \versionmanual{} · Revisión: \fechacorte\par}
 \end{titlepage}
 
 \chapter*{Resumen}
@@ -55,8 +53,7 @@ en la carpeta \projectroot, donde están \code{pyproject.toml}, \code{examples/}
 \code{models/}. Todos los comandos del proyecto parten de esa carpeta, salvo que se indique otra.
 No ejecutes los ejemplos desde el visor del ZIP. Conserva el PDF y el ZIP con la misma versión.
 
-Los recuadros azules indican decisiones; los amarillos, precauciones; los rojos, condiciones
-de parada; y los verdes, datos del TFG. Ejecuta solo el bloque que corresponda a tu equipo.
+Ejecuta solo el bloque que corresponda a tu equipo.
 Los bloques que usan \code{sudo}, \code{apt} o \code{lspci} son para Linux. El
 \cref{chap:software} incluye la activación del entorno en Windows.
 

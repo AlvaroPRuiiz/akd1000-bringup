@@ -20,9 +20,9 @@ antes de comenzar a medir.
 \begin{figure}[H]
   \centering
   \begin{tikzpicture}[
-    stage/.style={draw=AkidaBlue,rounded corners=1mm,align=center,
-                  minimum height=12mm,text width=25mm,fill=AkidaPale},
-    flow/.style={->,thick,draw=AkidaInk}
+    stage/.style={draw=black!70,align=center,
+                  minimum height=12mm,text width=25mm,fill=white},
+    flow/.style={->,thick,draw=black}
   ]
     \node[stage] (input) at (-4.8,0) {Entrada};
     \node[stage] (host) at (-1.6,0) {Host\\API Akida};
@@ -33,7 +33,7 @@ antes de comenzar a medir.
     \draw[flow] (host) -- (device);
     \draw[flow] (device) -- (output);
 
-    \draw[dashed,AkidaBlue]
+    \draw[dashed,black!70]
       (-1.6,0.9) -- (-1.6,1.2) -- (4.8,1.2) -- (4.8,0.9);
 
     \node[fill=white,inner sep=1mm] at (1.6,1.2)
