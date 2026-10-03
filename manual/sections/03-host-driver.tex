@@ -81,7 +81,7 @@ uname -r
 
 La versión del controlador consultada para este manual admite kernels desde 5.4 hasta
 6.8. En kernels 6.9 o posteriores el módulo no se compila \cite{brainchip_driver}.
-Como esta compatibilidad puede cambiar, conviene comprobar también el README del
+Como esta compatibilidad puede cambiar, consulta también el README del
 repositorio antes de instalarlo.
 
 \begin{stopbox}{Kernel no compatible}
@@ -110,12 +110,12 @@ git rev-parse HEAD
 ./install.sh
 \end{lstlisting}
 
-El último comando mostrado por \code{git rev-parse HEAD} permite conservar la revisión
-exacta del controlador utilizada, aunque puedes ser libre de usar una configuración propia.
+La salida de \code{git rev-parse HEAD} registra la revisión exacta del controlador
+utilizada; también puedes usar una configuración propia.
 
 \section{Comprobar el controlador}
 
-Una vez terminada la instalación, comprueba el estado de DKMS y que el dispositivo
+Después de instalar el controlador, revisa el estado de DKMS y confirma que el dispositivo
 Akida está disponible:
 
 \begin{lstlisting}[language=bash]

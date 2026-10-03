@@ -1,0 +1,161 @@
+\documentclass[11pt,a4paper,oneside,openany,numbers=noendperiod]{scrreprt}
+
+\ifdefined\englishmanual
+  \usepackage[english]{babel}
+\else
+  \usepackage[provide=*,spanish]{babel}
+\fi
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\setsansfont{Latin Modern Sans}
+\setmonofont{Latin Modern Mono}[Scale=0.88,BoldFont={Latin Modern Mono}]
+\usepackage{geometry}
+\geometry{top=24mm,bottom=25mm,left=25mm,right=23mm,headsep=7mm,footskip=12mm}
+\usepackage{microtype}
+\usepackage{graphicx}
+\graphicspath{{\manualassetpath}}
+\usepackage{booktabs,longtable,tabularx,array,multirow}
+\usepackage{ragged2e}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{etoolbox,needspace,xurl}
+\usepackage[most]{tcolorbox}
+\usepackage{caption,subcaption}
+\usepackage{float}
+\usepackage{scrhack}
+\usepackage{amsmath,amssymb}
+\usepackage{csquotes}
+\usepackage{scrlayer-scrpage}
+\usepackage{hyperref}
+\usepackage[capitalise,noabbrev,nameinlink]{cleveref}
+
+\ifdefined\englishmanual
+\crefname{chapter}{chapter}{chapters}
+\Crefname{chapter}{Chapter}{Chapters}
+\crefname{section}{section}{sections}
+\Crefname{section}{Section}{Sections}
+\crefname{subsection}{section}{sections}
+\Crefname{subsection}{Section}{Sections}
+\crefname{table}{table}{tables}
+\Crefname{table}{Table}{Tables}
+\crefname{figure}{figure}{figures}
+\Crefname{figure}{Figure}{Figures}
+\else
+\crefname{chapter}{capítulo}{capítulos}
+\Crefname{chapter}{Capítulo}{Capítulos}
+\crefname{section}{sección}{secciones}
+\Crefname{section}{Sección}{Secciones}
+\crefname{subsection}{sección}{secciones}
+\Crefname{subsection}{Sección}{Secciones}
+\crefname{table}{cuadro}{cuadros}
+\Crefname{table}{Cuadro}{Cuadros}
+\crefname{figure}{figura}{figuras}
+\Crefname{figure}{Figura}{Figuras}
+
+\fi
+
+\definecolor{AkidaBlue}{HTML}{153B5B}
+\definecolor{AkidaCyan}{HTML}{007F8B}
+\definecolor{AkidaGreen}{HTML}{2C7A62}
+\definecolor{AkidaAmber}{HTML}{A86400}
+\definecolor{AkidaRed}{HTML}{A23832}
+\definecolor{AkidaInk}{HTML}{1E2933}
+\definecolor{AkidaPale}{HTML}{F3F7F8}
+\definecolor{CodeBG}{HTML}{F5F6F7}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=AkidaBlue,
+  citecolor=AkidaGreen,
+  urlcolor=AkidaCyan,
+  pdftitle={\manualtitle},
+  pdfauthor={Álvaro Poveda Ruiz},
+  pdfsubject={\manualsubject},
+  pdfkeywords={AKD1000, Akida, BrainChip, PCIe, Raspberry Pi 5, MetaTF}
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.48em}
+\widowpenalty=10000
+\clubpenalty=10000
+\displaywidowpenalty=10000
+\setlist[itemize]{leftmargin=1.45em,itemsep=0.18em,topsep=0.25em}
+\setlist[enumerate]{leftmargin=1.7em,itemsep=0.28em,topsep=0.25em}
+\renewcommand{\arraystretch}{1.16}
+\newcolumntype{L}[1]{>{\RaggedRight\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\RaggedRight\arraybackslash}X}
+\captionsetup{font=small,labelfont={bf,color=AkidaBlue}}
+\addtokomafont{chapter}{\color{AkidaBlue}\sffamily}
+\addtokomafont{section}{\color{AkidaBlue}\sffamily}
+\addtokomafont{subsection}{\color{AkidaCyan}\sffamily}
+
+\clearpairofpagestyles
+\ihead{\small\sffamily\manualheader}
+\ohead{\small\sffamily\leftmark}
+\cfoot{\small\sffamily\thepage}
+\setkomafont{pageheadfoot}{\color{AkidaInk}}
+\pagestyle{scrheadings}
+
+\lstdefinestyle{terminal}{
+  basicstyle=\ttfamily\footnotesize,
+  backgroundcolor=\color{CodeBG},
+  frame=single,
+  rulecolor=\color{black!15},
+  framerule=0.4pt,
+  breaklines=true,
+  breakatwhitespace=false,
+  columns=fullflexible,
+  keepspaces=true,
+  showstringspaces=false,
+  upquote=true,
+  xleftmargin=0.6em,
+  xrightmargin=0.6em,
+  aboveskip=0.5em,
+  belowskip=0.7em
+}
+\lstset{style=terminal}
+% Keep each executable block on one page.
+\BeforeBeginEnvironment{lstlisting}{\par\begin{minipage}{\linewidth}}
+\AfterEndEnvironment{lstlisting}{\end{minipage}\par}
+\preto\section{\Needspace{7\baselineskip}}
+\preto\subsection{\Needspace{6\baselineskip}}
+
+\newtcolorbox{decisionbox}[1]{
+  enhanced,breakable,colback=AkidaPale,colframe=AkidaBlue,
+  boxrule=0.7pt,arc=1.2mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm,
+  title={#1},fonttitle=\bfseries\sffamily
+}
+\newtcolorbox{warningbox}[1]{
+  enhanced,breakable,colback=AkidaAmber!6,colframe=AkidaAmber,
+  boxrule=0.7pt,arc=1.2mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm,
+  title={#1},fonttitle=\bfseries\sffamily
+}
+\newtcolorbox{stopbox}[1]{
+  enhanced,breakable,colback=AkidaRed!5,colframe=AkidaRed,
+  boxrule=0.8pt,arc=1.2mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm,
+  title={#1},fonttitle=\bfseries\sffamily
+}
+\newtcolorbox{tfgevidence}[1]{
+  enhanced,breakable,colback=AkidaGreen!5,colframe=AkidaGreen,
+  boxrule=0.7pt,arc=1.2mm,left=2mm,right=2mm,top=1.5mm,bottom=1.5mm,
+  title={\thesiscase: #1},fonttitle=\bfseries\sffamily
+}
+\newcommand{\code}[1]{\texttt{#1}}
+\newcommand{\versionmanual}{1.2.2}
+\ifdefined\englishmanual
+  \newcommand{\fechacorte}{29 September 2026}
+  \newcommand{\bibaccessed}{Accessed on}
+  \newcommand{\bibmasteraccessed}{Master branch accessed on}
+  \newcommand{\bibconnectionaccessed}{Connection guide accessed on}
+  \newcommand{\bibversionaugust}{Version 2.3, August 2025}
+  \newcommand{\bibcoderepository}{Code repository}
+\else
+  \newcommand{\fechacorte}{29 de septiembre de 2026}
+  \newcommand{\bibaccessed}{Consultado el}
+  \newcommand{\bibmasteraccessed}{Rama master consultada el}
+  \newcommand{\bibconnectionaccessed}{Guía de conexión consultada el}
+  \newcommand{\bibversionaugust}{Versión 2.3, agosto de 2025}
+  \newcommand{\bibcoderepository}{Repositorio de código}
+\fi
+\newcommand{\projectroot}{\texttt{akd1000-bringup}}

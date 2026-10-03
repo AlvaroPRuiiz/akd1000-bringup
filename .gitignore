@@ -16,7 +16,7 @@ evidence/
 *.fbz
 *.npy
 *.npz
-!models/README.md
+
 !models/akida_v1_smoke_test.fbz
 
 .mypy_cache/
@@ -39,3 +39,4 @@ manual/**/*.lof
 manual/**/*.lot
 manual/**/*.xdv
 manual/main.pdf
+manual/en/main.pdf

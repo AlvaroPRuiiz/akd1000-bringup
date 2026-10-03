@@ -1,4 +1,4 @@
-"""Transparent host-observed latency benchmark for AKD1000."""
+"""Host-observed latency benchmark for AKD1000."""
 
 from __future__ import annotations
 

@@ -1,0 +1,51 @@
+\chapter{Maintenance and updates}
+\label{chap:mantenimiento}
+
+\section{Save a known working configuration}
+
+After the first successful run on the board, save the basic environment information.
+It provides a reference if an update causes a fault.
+
+\begin{lstlisting}[language=bash]
+mkdir -p evidence/known-good
+
+akd1000-bringup doctor --json \
+  > evidence/known-good/doctor.json
+
+python -m pip freeze \
+  > evidence/known-good/pip-freeze.txt
+
+sha256sum models/*.fbz \
+  > evidence/known-good/model-hashes.txt
+\end{lstlisting}
+
+Also retain the project and driver versions used. If the system later stops working,
+this configuration helps identify what has changed.
+
+\section{Update the environment}
+
+Updates to the kernel, driver, Python or Akida can affect board operation. Where
+possible, change one component at a time and repeat the smoke test afterwards.
+
+A simple procedure is:
+
+\begin{enumerate}
+  \item check compatibility with the new version;
+  \item apply the update;
+  \item reboot if needed;
+  \item repeat board detection and the software and hardware tests.
+\end{enumerate}
+
+If a fault occurs, compare the system with the saved configuration and follow the
+procedure in \cref{chap:diagnostico}.
+
+The driver uses DKMS to rebuild the module after a kernel update. This works only
+while the new kernel version remains supported by the driver.
+
+\section{Shutdown and storage}
+
+Before disconnecting the board, finish active runs and shut down the host normally.
+Then disconnect the power supplies before removing the board or FFC cable.
+
+For long-term storage, protect the boards against electrostatic discharge and avoid
+bending the FFC cable or leaving it under mechanical tension.

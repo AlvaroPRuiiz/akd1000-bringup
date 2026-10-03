@@ -1,0 +1,150 @@
+\chapter{Quick command reference}
+\label{app:comandos}
+
+This appendix collects the main Linux commands in the procedure. The corresponding
+chapters explain their use and conditions.
+
+\section{Check the system}
+
+\begin{lstlisting}[language=bash]
+uname -r
+uname -m
+cat /etc/os-release
+lspci -nn
+\end{lstlisting}
+
+\section{Raspberry Pi 5}
+
+For a non-HAT+ PCIe adapter, edit:
+
+\begin{lstlisting}[language=bash]
+sudoedit /boot/firmware/config.txt
+\end{lstlisting}
+
+and add this line if it is not already present:
+
+\begin{lstlisting}
+dtparam=pciex1
+\end{lstlisting}
+
+Then reboot and check the connection:
+
+\begin{lstlisting}[language=bash]
+sudo reboot
+lspci -nn
+\end{lstlisting}
+
+\section{PCIe driver}
+
+On Ubuntu:
+
+\begin{lstlisting}[language=bash]
+sudo apt update
+sudo apt install dkms build-essential "linux-headers-$(uname -r)"
+\end{lstlisting}
+
+Download and install the driver:
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/Brainchip-Inc/akida_dw_edma.git
+cd akida_dw_edma
+git rev-parse HEAD
+./install.sh
+\end{lstlisting}
+
+Check the installation:
+
+\begin{lstlisting}[language=bash]
+dkms status
+lsmod | grep -i akida
+ls -l /dev/akida*
+lspci -nnk
+\end{lstlisting}
+
+\section{Python environment}
+
+From the project root:
+
+\begin{lstlisting}[language=bash]
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+\end{lstlisting}
+
+Current MetaTF installation:
+
+\begin{lstlisting}[language=bash]
+python -m pip install "metatf==2.19.3"
+\end{lstlisting}
+
+or the repository's reference environment:
+
+\begin{lstlisting}[language=bash]
+python -m pip install -r requirements/reproducible.txt
+\end{lstlisting}
+
+Then install the project tools:
+
+\begin{lstlisting}[language=bash]
+python -m pip install -e . --no-deps
+python -m pip check
+\end{lstlisting}
+
+\section{Smoke tests}
+
+Software test:
+
+\begin{lstlisting}[language=bash]
+python examples/00_simulator_smoke.py
+akd1000-bringup verify \
+  --id smoke \
+  --model models/akida_v1_smoke_test.fbz
+\end{lstlisting}
+
+Diagnostics:
+
+\begin{lstlisting}[language=bash]
+akd1000-bringup doctor
+\end{lstlisting}
+
+Board test:
+
+\begin{lstlisting}[language=bash]
+akida devices
+python examples/01_hardware_smoke.py
+\end{lstlisting}
+
+\section{Run your own model}
+
+\begin{lstlisting}[language=bash]
+akd1000-bringup run \
+  --model models/model.fbz \
+  --input data/input.npy \
+  --method forward \
+  --clock Performance \
+  --map AllNps \
+  --output outputs/raw-output.npy
+\end{lstlisting}
+
+\section{Benchmark}
+
+\begin{lstlisting}[language=bash]
+akd1000-bringup benchmark \
+  --model models/model.fbz \
+  --input data/inputs.npy \
+  --method forward \
+  --clock Performance \
+  --map AllNps \
+  --warmup 8 \
+  --repetitions 1 \
+  --output outputs/smoke
+\end{lstlisting}
+
+\section{Quick troubleshooting}
+
+\begin{enumerate}
+  \item If the board does not appear in \code{lspci}, check the assembly and PCIe configuration.
+  \item If it appears on PCIe but \code{/dev/akida*} is missing, check the driver.
+  \item If the node exists but \code{akida.devices()} is empty, check the environment and permissions.
+  \item If the test model works but your own model does not, check the model and its input data.
+\end{enumerate}

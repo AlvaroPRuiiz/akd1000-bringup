@@ -22,7 +22,7 @@ def main() -> int:
 
     devices = list(akida.devices())
     if not devices:
-        raise SystemExit("FAIL: Akida detects no hardware. Complete the manual preflight first.")
+        raise SystemExit("FAIL: No Akida hardware detected. Follow the host and driver checks in the manual.")
     if not 0 <= args.device_index < len(devices):
         raise SystemExit(f"FAIL: device-index is out of range; found {len(devices)} device(s).")
 

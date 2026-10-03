@@ -1,4 +1,4 @@
-"""Thin, explicit wrapper around the Akida runtime API."""
+"""Wrapper around the Akida runtime API."""
 
 from __future__ import annotations
 
@@ -59,7 +59,7 @@ def map_model(
     available = list(akida.devices())
     if not available:
         raise RuntimeUnavailableError(
-            "akida.devices() returned no hardware. Diagnose power, PCIe and SDK before the model."
+            "akida.devices() returned no hardware. Check power, PCIe and the SDK before checking the model."
         )
     if device_index < 0 or device_index >= len(available):
         raise IndexError(f"Device index {device_index} is invalid for {len(available)} device(s).")

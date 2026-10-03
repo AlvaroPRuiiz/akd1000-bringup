@@ -1,4 +1,4 @@
-"""Small, explicit NumPy data loaders for model inputs."""
+"""NumPy data loaders for model inputs."""
 
 from __future__ import annotations
 

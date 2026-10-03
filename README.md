@@ -5,10 +5,13 @@ checking the host/driver/software stack, running a known smoke-test model and
 benchmarking Akida FBZ models. The manual covers Linux PCIe hosts and Raspberry
 Pi 5 with a compatible FFC-to-PCIe adapter; software checks also run on Windows.
 
-The project was developed from the hardware deployment work carried out during
+The project grew out of the hardware deployment work for
 a Telecommunications Engineering final degree project at Universidad Politécnica de Madrid.
 
-[Read the full manual](manual/AKD1000_Bringup_Guide.pdf) · [Español](README.es.md)
+## Documentation
+
+- [Manual en español](manual/AKD1000_Bringup_Guide_ES.pdf)
+- [English manual](manual/AKD1000_Bringup_Guide_EN.pdf)
 
 ## Quick start
 
@@ -53,7 +56,7 @@ Provide your own FBZ and input data with the model's required shape and preproce
 - `models/`: reference FBZ and integrity manifest.
 - `requirements/`: reference Akida environment.
 - `tests/`: automated tests (`python -m unittest discover -s tests -v`).
-- `manual/`: LaTeX sources, builder and final PDF; `docs/assets/`: manual figures.
+- `manual/`: Spanish and English LaTeX sources, shared styles, builder and PDFs; `docs/assets/`: manual figures.
 
 Build the manual with `python manual/build.py` (XeLaTeX and BibTeX required).
 
@@ -67,3 +70,5 @@ No CPU, GPU or FPGA speedup claim is made by this toolkit.
 
 Original content retains its MIT license. BrainChip's SDK and PCIe driver are not
 redistributed; see [third-party notices](THIRD_PARTY_NOTICES.md).
+Contributor checks are in [CONTRIBUTING.md](CONTRIBUTING.md);
+figure provenance is in [docs/assets/README.md](docs/assets/README.md).

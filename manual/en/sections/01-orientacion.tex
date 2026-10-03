@@ -1,0 +1,96 @@
+\chapter{Overview and workflow selection}
+\label{chap:orientacion}
+
+\section{System components}
+
+The AKD1000 does not operate as a standalone application. The host runs the operating
+system and runtime; PCIe carries commands and data; the driver exposes the device to
+the system; and the FBZ model defines the network that the runtime can map.
+Separating these layers avoids looking for a power fault in Python or reinstalling
+the driver to fix a missing package.
+
+\begin{table}[H]
+\centering
+\caption{Role of each system layer.}
+\label{tab:capas}
+\begin{tabularx}{\textwidth}{@{}L{0.22\textwidth}YY@{}}
+\toprule
+\textbf{Layer} & \textbf{Role} & \textbf{What it does not prove on its own} \\
+\midrule
+Host & Runs Linux or Windows, Python, data preparation and logging. & That the computation ran on the board. \\
+PCIe interface & Carries configuration, inputs and outputs. & That a usable driver is available. \\
+Linux driver & Provides device access, usually through \code{/dev/akida*}. & That the model is compatible. \\
+Akida runtime & Loads FBZ files, discovers devices, maps and executes models. & That virtual mapping is physical inference. \\
+AKD1000 & Runs the sequences assigned to the hardware. & Total Python execution time or total platform power consumption. \\
+FBZ & Stores a serialized Akida network. & The meaning of inputs, labels or the dataset. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The PCIe board documented by BrainChip contains an AKD1000, uses a PCIe host interface
+and has LPDDR4 memory accessible through DMA \cite{brainchip_card_brief}.
+The SoC product brief describes twenty neural processing cores and a two-lane PCIe 2.1
+endpoint \cite{brainchip_soc_brief}. These are product specifications, not a guarantee
+of latency, energy or resource utilization for every network.
+
+\section{Three decisions before you start}
+
+\begin{decisionbox}{Decision 1: software or hardware}
+Without a board, follow route \textbf{S}: software environment, test model and virtual
+device. With a board and a documented PCIe connection, complete route S first, then
+continue with route \textbf{H}. Simulation checks the model and package; it does not
+check the cabling, driver or board.
+\end{decisionbox}
+
+\begin{decisionbox}{Decision 2: current or reference environment}
+To learn with the current documentation, use route \textbf{A}: MetaTF 2.19.3, or the
+version listed on the official page when you read this manual. To repeat the included
+test, use route \textbf{R}: Python 3.11 and Akida 2.19.1. This route does not reproduce
+the complete AoA experiment. Do not combine both installations in one virtual environment.
+\end{decisionbox}
+
+\begin{decisionbox}{Decision 3: host type}
+A Linux PC with a PCIe slot and a Raspberry Pi 5 with an FFC adapter need different
+assemblies. Windows is included in the current MetaTF software configurations
+\cite{brainchip_install_2193}, but this manual does not claim physical board support
+on Windows: the public PCIe driver instructions consulted are for Linux
+\cite{brainchip_driver}.
+\end{decisionbox}
+
+\section{Workflow matrix}
+
+\begin{longtable}{@{}L{0.12\textwidth}L{0.21\textwidth}L{0.29\textwidth}L{0.28\textwidth}@{}}
+\caption{Workflows covered by the manual.}\label{tab:rutas}\\
+\toprule
+\textbf{Route} & \textbf{Host} & \textbf{Objective} & \textbf{Final evidence} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Route} & \textbf{Host} & \textbf{Objective} & \textbf{Final evidence} \\
+\midrule
+\endhead
+S & Compatible Windows or Linux host, no board & Install MetaTF, import Akida and run in software. & Recorded version, model output and virtual mapping. \\
+H-PC & Linux host, board and documented PCIe connection & Detect the AKD1000 and run on it through the public driver. & \code{lspci}, module, node, \code{akida devices} and physical test. \\
+H-Pi & Raspberry Pi 5, FFC adapter and board & Enable PCIe when needed and complete H-PC. & Boot configuration, enumeration and physical test. \\
+R & Python 3.11 and reference SDK & Repeat the smoke test with Akida 2.19.1. & Known output and verified virtual mapping. \\
+\bottomrule
+\end{longtable}
+
+\section{Criteria for moving on}
+
+Each stage answers a different question:
+
+\begin{enumerate}[nosep]
+  \item \textbf{Inventory:} do I know the exact host, board, adapter, power supplies,
+        operating system, kernel and architecture?
+  \item \textbf{Assembly:} is the chain connected according to the documentation for those revisions?
+  \item \textbf{Enumeration:} does the host see a new PCIe endpoint?
+  \item \textbf{Driver:} has the module been built for this kernel, and is the node accessible?
+  \item \textbf{SDK:} does the active interpreter import the expected Akida version?
+  \item \textbf{Model:} does the FBZ load, have the expected contract and map as intended?
+  \item \textbf{Execution:} does a known input produce a known output on hardware?
+  \item \textbf{Measurement:} are the window, units and power measurement boundary stated?
+\end{enumerate}
+
+Do not move past a negative answer. Recording the first failed stage is more useful
+than running a long list of commands and keeping only the last error.

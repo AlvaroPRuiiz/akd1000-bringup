@@ -35,7 +35,7 @@ def build_parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
 
     doctor = commands.add_parser("doctor", help="Run read-only host and hardware diagnostics.")
-    doctor.add_argument("--json", action="store_true", help="Emit machine-readable JSON.")
+    doctor.add_argument("--json", action="store_true", help="Print JSON.")
     doctor.add_argument(
         "--expected-akida",
         help="Return 1 if the detected SDK differs; omit for a version-neutral check.",
@@ -47,7 +47,7 @@ def build_parser() -> argparse.ArgumentParser:
     verify.add_argument("--id", required=True, help="Model identifier in the manifest.")
 
     run = commands.add_parser(
-        "run", help="Run a single-input/single-output model and preserve its numeric output."
+        "run", help="Run a model with one input and one output; preserve output values."
     )
     _mapping_arguments(run)
     run.add_argument("--input", type=Path, required=True, help="Input .npy or .npz file.")

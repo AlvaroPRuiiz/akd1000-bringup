@@ -1,0 +1,137 @@
+\chapter{Host preparation and PCIe driver}
+\label{chap:host-driver}
+
+\section{Initial checks}
+
+Before installing the driver, check the operating system version, architecture and
+kernel. On Linux, you can save this information in \code{evidence}:
+
+\begin{lstlisting}[language=bash]
+mkdir -p evidence
+{
+  cat /etc/os-release
+  uname -r
+  uname -m
+  lspci -nn
+} | tee evidence/host-inventory.txt
+\end{lstlisting}
+
+\code{uname -m} usually reports \code{x86\_64} on a PC and \code{aarch64} on a
+Raspberry Pi 5 with a 64-bit operating system. The kernel version is needed to check
+driver compatibility.
+
+\section{Enable PCIe on Raspberry Pi 5}
+
+This section applies only to Raspberry Pi 5. Compatible HAT+ devices can be detected
+automatically, whereas Raspberry Pi specifies that a non-HAT+ PCIe adapter needs the
+PCIe interface enabled in the configuration file \cite{rpi_pcie}.
+
+On current Raspberry Pi OS, open:
+
+\begin{lstlisting}[language=bash]
+sudoedit /boot/firmware/config.txt
+\end{lstlisting}
+
+If that path does not exist, check \code{/boot/config.txt}. Add:
+
+\begin{lstlisting}[language=bash]
+dtparam=pciex1
+\end{lstlisting}
+
+Save the file and reboot:
+
+\begin{lstlisting}[language=bash]
+sudo reboot
+\end{lstlisting}
+
+Raspberry Pi 5 uses PCIe Gen2 by default. Gen3 can be enabled, but Raspberry Pi warns
+that the board is not certified for stable operation at that speed \cite{rpi_pcie}.
+Keep Gen2 for bring-up.
+
+\section{Check the PCIe connection}
+
+After booting, check that the system detects the board:
+
+\begin{lstlisting}[language=bash]
+lspci -nn
+\end{lstlisting}
+
+A PCIe device corresponding to the board should appear. If it does not, check the
+assembly, power and, on Raspberry Pi 5, whether PCIe is enabled before proceeding
+with the driver.
+
+For more information about the detected device, run:
+
+\begin{lstlisting}[language=bash]
+lspci -nnk
+\end{lstlisting}
+
+This stage checks only the PCIe connection. Seeing the board in \code{lspci} does
+not yet mean that the Akida driver is installed.
+
+\section{Install the driver}
+
+BrainChip's official PCIe driver is distributed in the \code{akida\_dw\_edma}
+repository. Before installing it, check the kernel version:
+
+\begin{lstlisting}[language=bash]
+uname -r
+\end{lstlisting}
+
+The driver version consulted for this manual supports kernels from 5.4 to 6.8.
+The module does not build on kernels 6.9 or later \cite{brainchip_driver}.
+Compatibility can change, so also check the repository README before installation.
+
+\begin{stopbox}{Unsupported kernel}
+If the kernel version is outside the driver's supported range, do not proceed with
+installation until you have checked whether BrainChip has released a compatible version.
+\end{stopbox}
+
+On Ubuntu, install the dependencies specified by BrainChip:
+
+\begin{lstlisting}[language=bash]
+sudo apt update
+sudo apt install dkms build-essential "linux-headers-$(uname -r)"
+\end{lstlisting}
+
+Package names may differ on other distributions, but DKMS, build tools and headers
+for the running kernel must be installed.
+
+Then clone the repository and install the driver:
+
+\begin{lstlisting}[language=bash]
+git clone https://github.com/Brainchip-Inc/akida_dw_edma.git
+cd akida_dw_edma
+git rev-parse HEAD
+./install.sh
+\end{lstlisting}
+
+The output of \code{git rev-parse HEAD} records the exact driver revision used;
+you can also use your own configuration.
+
+\section{Check the driver}
+
+After installation, check the DKMS status and confirm that the Akida device is available:
+
+\begin{lstlisting}[language=bash]
+dkms status
+lsmod | grep -i akida
+ls -l /dev/akida*
+lspci -nnk
+\end{lstlisting}
+
+Installation is successful when the device still appears on PCIe, the module is loaded
+and at least one \code{/dev/akida*} node exists.
+
+If the device appears in \code{lspci} but \code{/dev/akida*} is missing, read the
+kernel messages:
+
+\begin{lstlisting}[language=bash]
+sudo dmesg | grep -iE 'akida|edma|pcie' | tail -n 120
+\end{lstlisting}
+
+If the node exists but is accessible only as \code{root}, check its permissions and
+the udev rule installed by the driver before proceeding.
+
+With the driver working, continue with the software environment setup in
+\cref{chap:software}.

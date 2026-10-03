@@ -1,0 +1,83 @@
+\begin{titlepage}
+  \centering
+  \vspace*{8mm}
+  {\sffamily\bfseries\color{AkidaBlue}\fontsize{26}{31}\selectfont BrainChip AKD1000\par}
+  \vspace{5mm}
+  {\sffamily\fontsize{16}{21}\selectfont
+  Bring-up, model execution and troubleshooting manual\par}
+  \vspace{8mm}
+  {\color{AkidaCyan}\rule{0.72\textwidth}{1.1pt}\par}
+  \vspace{8mm}
+  \includegraphics[width=0.60\textwidth]{hardware-powered-isolated.png}
+  \vfill
+  {\large Álvaro Poveda Ruiz\par}
+  \vspace{2mm}
+  {\small Supplementary material for the Bachelor's Thesis (TFG)\par
+  Universidad Politécnica de Madrid, 2026\par}
+  \vspace{8mm}
+  {\sffamily\small Version \versionmanual{} · Revision: \fechacorte\par}
+\end{titlepage}
+
+\chapter*{Summary}
+\addcontentsline{toc}{chapter}{Summary}
+
+This manual describes the bring-up of a BrainChip AKD1000 board connected over PCIe.
+The procedure covers host preparation, driver and Python environment installation,
+model loading and execution checks. It also explains how to measure latency and
+identify common faults.
+
+The first test uses a simple model with a known output. It runs in software first
+and then on the board. This checks the Akida environment, model compatibility and
+hardware access separately before running your own application.
+
+Appendix~\ref{app:tfg} documents the thesis setup, software versions and results.
+The included tools can repeat the smoke test, but do not reproduce the AoA experiment
+on their own: its models and data are not part of this release. A complete run of this
+version of the procedure on a physical board remains pending.
+
+\section*{Scope}
+
+The procedure covers environment installation, board detection, model loading and
+execution, statistics and performance measurement. It also includes checks for
+connection, driver, data and model errors.
+
+Apply the assembly instructions to the specific revision of each component.
+Before connecting power, check the voltage, polarity and cable orientation in the
+manufacturer's documentation. Board repair and internal electronic design are outside
+the scope of this manual.
+
+\chapter*{How to use this document}
+\addcontentsline{toc}{chapter}{How to use this document}
+
+Download the PDF together with \code{akd1000-bringup.zip} and extract the ZIP.
+Open a terminal in \projectroot, which contains \code{pyproject.toml},
+\code{examples/} and \code{models/}. All project commands start from this directory
+unless another location is specified. Do not run the examples from the ZIP viewer.
+Keep the PDF and ZIP at the same version.
+
+Blue boxes indicate decisions; yellow boxes, precautions; red boxes, stop conditions;
+and green boxes, thesis data. Run only the block for your host. Blocks that use
+\code{sudo}, \code{apt} or \code{lspci} are for Linux. \Cref{chap:software}
+includes environment activation on Windows.
+
+Without a board, start at \cref{chap:software} and complete the software test.
+With hardware available, first read the inventory and assembly steps in chapters
+\ref{chap:orientacion} and \ref{chap:hardware}, then prepare the driver and SDK.
+
+\section*{Version and included material}
+
+\begin{tabularx}{\textwidth}{@{}L{0.29\textwidth}Y@{}}
+\toprule
+\textbf{Field} & \textbf{Value} \\
+\midrule
+Version and date & \versionmanual{}; \fechacorte \\
+Editable source & \code{manual/main.tex} and \code{manual/sections/} \\
+Thesis reference & Python 3.11.2 and Akida 2.19.1; appendix~\ref{app:tfg} \\
+Tests for this edition & Automated tests and simulator with Akida 2.19.1 and 2.19.3 on Windows; physical execution pending \\
+Included model & \code{models/akida\_v1\_smoke\_test.fbz}; four inputs and two outputs, no AoA data \\
+\bottomrule
+\end{tabularx}
+
+The bibliography links to the official instructions. The current software route and
+driver compatibility are checked separately: installing an SDK does not guarantee
+that the kernel can load the PCIe driver.

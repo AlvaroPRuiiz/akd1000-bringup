@@ -6,7 +6,7 @@
 La AKD1000 no se maneja como una aplicación aislada. El host ejecuta el sistema operativo y el
 runtime; PCIe transporta órdenes y datos; el controlador expone el dispositivo al sistema; y el
 modelo FBZ define la red que el runtime puede mapear. Separar estas capas evita buscar un fallo
-de alimentación en Python o intentar resolver un paquete ausente reinstalando el driver.
+de alimentación en Python o intentar resolver un paquete ausente reinstalando el controlador.
 
 \begin{table}[H]
 \centering
@@ -18,7 +18,7 @@ de alimentación en Python o intentar resolver un paquete ausente reinstalando e
 \midrule
 Host & Ejecuta Linux o Windows, Python, preparación de datos y registros. & Que el cálculo se haya realizado en la tarjeta. \\
 Interfaz PCIe & Transporta configuración, entradas y salidas. & Que exista un controlador utilizable. \\
-Driver Linux & Crea el acceso al dispositivo, normalmente mediante \code{/dev/akida*}. & Que el modelo sea compatible. \\
+Controlador Linux & Crea el acceso al dispositivo, normalmente mediante \code{/dev/akida*}. & Que el modelo sea compatible. \\
 Runtime Akida & Carga FBZ, descubre dispositivos, mapea y ejecuta. & Que un mapeo virtual sea una inferencia física. \\
 AKD1000 & Ejecuta las secuencias asignadas al hardware. & El tiempo total de Python ni el consumo de toda la plataforma. \\
 FBZ & Conserva una red Akida serializada. & El significado de las entradas, las etiquetas o el dataset. \\
@@ -38,7 +38,7 @@ latencia, energía o utilización para cualquier red.
 Si aún no tienes una tarjeta, sigue la ruta \textbf{S}: entorno software, modelo de prueba y
 dispositivo virtual. Si tienes la tarjeta y una conexión PCIe documentada, completa primero la
 ruta S y continúa con la ruta \textbf{H}. La simulación confirma el modelo y el paquete; no
-confirma el cableado, el driver ni la placa.
+confirma el cableado, el controlador ni la placa.
 \end{decisionbox}
 
 \begin{decisionbox}{Decisión 2: entorno actual o de referencia}
@@ -53,7 +53,7 @@ en el mismo entorno virtual.
 Un PC Linux con ranura PCIe y una Raspberry Pi 5 con adaptador FFC requieren montajes distintos.
 Windows está incluido en las configuraciones software actuales de MetaTF
 \cite{brainchip_install_2193}, pero este manual no afirma soporte de la tarjeta física en
-Windows: las instrucciones del driver PCIe público consultado son para Linux
+Windows: las instrucciones del controlador PCIe público consultado son para Linux
 \cite{brainchip_driver}.
 \end{decisionbox}
 
@@ -70,7 +70,7 @@ Windows: las instrucciones del driver PCIe público consultado son para Linux
 \midrule
 \endhead
 S & Windows o Linux compatible, sin tarjeta & Instalar MetaTF, importar Akida y ejecutar en software. & Versión registrada, salida del modelo y mapeo virtual. \\
-H-PC & Host Linux, tarjeta y conexión PCIe documentada & Detectar y ejecutar en AKD1000 mediante el driver público. & \code{lspci}, módulo, nodo, \code{akida devices} y prueba física. \\
+H-PC & Host Linux, tarjeta y conexión PCIe documentada & Detectar y ejecutar en AKD1000 mediante el controlador público. & \code{lspci}, módulo, nodo, \code{akida devices} y prueba física. \\
 H-Pi & Raspberry Pi 5, adaptador FFC y tarjeta & Habilitar PCIe cuando proceda y completar H-PC. & Configuración de arranque, enumeración y prueba física. \\
 R & Python 3.11 y SDK de referencia & Repetir la prueba básica con Akida 2.19.1. & Salida conocida y mapeo virtual comprobado. \\
 \bottomrule
@@ -85,7 +85,7 @@ Cada etapa responde a una pregunta distinta:
         kernel y arquitectura tengo?
   \item \textbf{Montaje:} ¿la cadena está conectada según la documentación de esas revisiones?
   \item \textbf{Enumeración:} ¿el host ve un endpoint PCIe nuevo?
-  \item \textbf{Driver:} ¿el módulo se ha compilado para este kernel y existe acceso al nodo?
+  \item \textbf{Controlador:} ¿el módulo se ha compilado para este kernel y existe acceso al nodo?
   \item \textbf{SDK:} ¿el intérprete activo importa la versión prevista de Akida?
   \item \textbf{Modelo:} ¿el FBZ carga, tiene el contrato esperado y mapea como se pretende?
   \item \textbf{Ejecución:} ¿una entrada conocida produce una salida conocida en hardware?

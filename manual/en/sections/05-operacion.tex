@@ -1,0 +1,143 @@
+\chapter{Running Akida models}
+\label{chap:operacion}
+
+\section{Load and inspect a model}
+
+Akida models are distributed as FBZ files. Before running one, check at least its
+input shape, output shape and the preprocessing used during conversion.
+
+Load the model and inspect its structure:
+
+\begin{lstlisting}[language=Python]
+import akida
+
+model = akida.Model("models/model.fbz")
+
+print("input_shape:", model.input_shape)
+print("output_shape:", model.output_shape)
+print("ip_version:", model.ip_version)
+model.summary()
+\end{lstlisting}
+
+\code{summary()} shows the layers and how the model can run. Resource use depends
+on the model and mapping mode.
+
+\section{Select the device}
+
+\code{akida.devices()} returns the available physical devices \cite{brainchip_akida_guide}:
+
+\begin{lstlisting}[language=Python]
+import akida
+
+devices = list(akida.devices())
+
+if not devices:
+    raise RuntimeError("No se ha detectado ningun dispositivo Akida")
+
+device = devices[0]
+print(device)
+\end{lstlisting}
+
+A device created with \code{akida.AKD1000()} is virtual and checks model mapping.
+To run inference on the board, use a device returned by \code{akida.devices()}.
+
+\section{Map the model to the board}
+
+A loaded model can initially run in software. To use the AKD1000, map it to the device:
+
+\begin{lstlisting}[language=Python]
+model.map(
+    device,
+    hw_only=True,
+    mode=akida.MapMode.AllNps
+)
+
+model.summary()
+\end{lstlisting}
+
+\code{hw\_only=True} requires execution entirely on Akida hardware
+\cite{brainchip_akida_guide}. If the model cannot map this way, the call raises an error.
+
+\code{AllNps}, \code{HwPr} and \code{Minimal} allocate AKD1000 resources in different
+ways. For a first run, you can use \code{AllNps}. \Cref{chap:rendimiento} examines
+its effect on latency and power consumption.
+
+\section{Prepare the input}
+
+The data shape and type depend on the model. Before inference, check that the input
+matches \code{model.input\_shape}.
+
+For example, for data stored in NumPy:
+
+\begin{lstlisting}[language=Python]
+import numpy as np
+
+data = np.load("data/inputs.npy", allow_pickle=False)
+
+print("shape:", data.shape)
+print("dtype:", data.dtype)
+print("min/max:", data.min(), data.max())
+
+if tuple(data.shape[1:]) != tuple(model.input_shape):
+    raise ValueError(
+        f"Forma de entrada {data.shape[1:]} "
+        f"!= {model.input_shape}"
+    )
+\end{lstlisting}
+
+The data type, range and channel order must match those used when preparing and
+converting the model. There is no input range common to all Akida models.
+
+In particular, the 0--15 range used by the thesis AoA models is specific to that case
+and should not be applied to other models.
+
+\section{Run the model}
+
+The Akida API can run the model through \code{forward()} or \code{predict()}.
+The choice depends on how the model output was defined and validated during conversion
+\cite{brainchip_akida_guide}.
+
+For example:
+
+\begin{lstlisting}[language=Python]
+output = model.forward(data)
+print(output)
+\end{lstlisting}
+
+Keep the same execution method throughout a measurement campaign so that the results
+are comparable.
+
+You can also use the tool included in this repository:
+
+\begin{lstlisting}[language=bash]
+akd1000-bringup run \
+  --model models/model.fbz \
+  --input data/input.npy \
+  --method forward \
+  --clock Performance \
+  --map AllNps \
+  --output outputs/raw-output.npy
+\end{lstlisting}
+
+The tool loads the input, runs the model and saves the output to a NumPy file.
+The input must have the shape
+
+\begin{lstlisting}
+(batch, *model.input_shape)
+\end{lstlisting}
+
+Models with multiple inputs or outputs require direct handling through the Akida API.
+
+\section{Clock mode}
+
+The AKD1000 has \code{Performance}, \code{Economy} and \code{LowPower} clock modes.
+Select the mode through the API:
+
+\begin{lstlisting}[language=Python]
+device.soc.clock_mode = akida.soc.ClockMode.Performance
+print(device.soc.clock_mode)
+\end{lstlisting}
+
+Record the clock mode when comparing performance measurements. Lower instantaneous
+power does not necessarily mean lower energy per inference, because execution time
+may also change.

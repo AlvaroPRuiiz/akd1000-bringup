@@ -1,0 +1,151 @@
+\chapter{Software environment and first test}
+\label{chap:software}
+
+\section{Prepare the environment}
+
+BrainChip distributes the Akida tools through MetaTF. For the version used in this
+manual, the current installation uses \code{metatf==2.19.3} and supports
+Python 3.10--3.12 \cite{brainchip_install_2193}.
+
+The repository also includes a reference configuration based on Python 3.11 and
+Akida 2.19.1, the version used in the thesis. This second option repeats the smoke
+test in a known environment.
+
+Open a terminal in \projectroot, the directory extracted from the ZIP.
+
+On Linux:
+
+\begin{lstlisting}[language=bash]
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+\end{lstlisting}
+
+On Windows, in PowerShell:
+
+\begin{lstlisting}
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+\end{lstlisting}
+
+Create the virtual environment only once. In a new terminal, activate it again
+before proceeding.
+
+\section{Install Akida}
+
+Choose one of the following two configurations.
+
+For the current version documented by BrainChip:
+
+\begin{lstlisting}
+python -m pip install "metatf==2.19.3"
+\end{lstlisting}
+
+To repeat the reference configuration included with the repository:
+
+\begin{lstlisting}
+python -m pip install -r requirements/reproducible.txt
+\end{lstlisting}
+
+Do not combine both installations in one virtual environment.
+
+Then install the tools included in this repository:
+
+\begin{lstlisting}
+python -m pip install -e . --no-deps
+python -m pip check
+\end{lstlisting}
+
+Check that Akida imports successfully:
+
+\begin{lstlisting}
+python -c "import akida; print(akida.__version__); print(akida.devices())"
+\end{lstlisting}
+
+Without a connected board, \code{akida.devices()} returning \code{[]} is normal.
+With an AKD1000 connected and a working driver, at least one device should appear.
+
+\section{First software test}
+
+Before using the board, run the test model included with the repository:
+
+\begin{lstlisting}
+python examples/00_simulator_smoke.py
+\end{lstlisting}
+
+The model receives four input values. For
+
+\begin{lstlisting}
+[3, 2, 1, 4]
+\end{lstlisting}
+
+the expected output is
+
+\begin{lstlisting}
+[5, 5]
+\end{lstlisting}
+
+The script first runs the model in software, then checks that it can map to a virtual
+AKD1000. This last step verifies model compatibility with the board's architecture;
+it does not use physical hardware.
+
+You can also run the check provided by the repository's command-line tool:
+
+\begin{lstlisting}
+akd1000-bringup verify --id smoke --model models/akida_v1_smoke_test.fbz
+\end{lstlisting}
+
+If both tests pass, the Python environment and test model are ready.
+
+\section{Check the host}
+
+Before using the physical board, you can run the repository's diagnostics:
+
+\begin{lstlisting}
+akd1000-bringup doctor
+\end{lstlisting}
+
+To save the result:
+
+\begin{lstlisting}
+mkdir -p evidence
+akd1000-bringup doctor --json > evidence/preflight.json
+\end{lstlisting}
+
+The tool checks the Akida version, kernel, PCIe connection and detected devices,
+among other information. Its output helps locate the fault when the board does not appear.
+
+On a host without an AKD1000, a diagnostic report showing no detected devices is normal.
+
+\section{First execution on the AKD1000}
+
+This test requires PCIe detection of the board and the driver from
+\cref{chap:host-driver} to be installed.
+
+First check that Akida detects the device:
+
+\begin{lstlisting}
+akida devices
+\end{lstlisting}
+
+Then run:
+
+\begin{lstlisting}
+python examples/01_hardware_smoke.py
+\end{lstlisting}
+
+The script loads the same model used in the software test, maps it to the AKD1000
+and runs the known input. The output should again be:
+
+\begin{lstlisting}
+[5, 5]
+\end{lstlisting}
+
+A \code{PASS} result confirms that the model has loaded, the board is accessible
+through Akida and inference has run successfully on the hardware.
+
+\begin{stopbox}{If the physical test fails}
+Do not move on to your own model yet. Save the error message and use the procedure
+in \cref{chap:diagnostico} to locate the fault.
+\end{stopbox}

@@ -1,0 +1,180 @@
+\chapter{Documented thesis case}
+\label{app:tfg}
+
+This appendix summarizes the assembly, software environment and results from the
+thesis. They describe one configuration and should not be read as general AKD1000
+requirements.
+
+\section{Assembly used}
+
+The thesis assembly consisted of the components listed in
+\cref{tab:componentes-tfg} \cite{poveda_tfg_2026}.
+
+\begin{longtable}{@{}L{0.27\textwidth}L{0.43\textwidth}L{0.22\textwidth}@{}}
+\caption{Hardware used in the thesis.}
+\label{tab:componentes-tfg}\\
+\toprule
+\textbf{Component} & \textbf{Identification} & \textbf{Notes} \\
+\midrule
+\endfirsthead
+
+\toprule
+\textbf{Component} & \textbf{Identification} & \textbf{Notes} \\
+\midrule
+\endhead
+
+Host &
+Raspberry Pi 5 Model B, 8~GB RAM, \code{Rev 1.1}. &
+Purchased as part of a db-tronic kit. \\
+
+Storage &
+64~GB M.2 NVMe SSD. &
+Included in the kit; the exact model was not retained. \\
+
+Cooling and case &
+Active cooling system and case included in the kit. &
+The commercial part number was not retained. \\
+
+Host power supply &
+27~W power supply. &
+Included in the kit. \\
+
+Adapter &
+Waveshare \emph{PCIe TO PCIe x1 Board (C)} for Raspberry Pi 5. &
+Connected to the Raspberry Pi through FFC. \\
+
+Cable &
+FFC marked \code{PCIe-Cable-50mm}. &
+50~mm long. \\
+
+Board &
+BrainChip Akida PCIe Board AKD1000. &
+The device appeared as \code{BC.00.000.002}. \\
+
+Board power &
+12~V DC through the carrier. &
+Powered separately from the Raspberry Pi. \\
+
+\bottomrule
+\end{longtable}
+
+The physical chain was:
+
+\begin{center}
+Raspberry Pi 5
+$\rightarrow$
+FFC cable
+$\rightarrow$
+Waveshare carrier
+$\rightarrow$
+BrainChip AKD1000
+\end{center}
+
+The Raspberry Pi was powered through USB-C and the AKD1000 board through the carrier's
+12~V input.
+
+\section{Software environment}
+
+\Cref{tab:tfg-env} lists the versions used during the final campaign.
+
+\begin{table}[H]
+\centering
+\caption{Thesis software environment.}
+\label{tab:tfg-env}
+\begin{tabularx}{\textwidth}{@{}L{0.32\textwidth}Y@{}}
+\toprule
+\textbf{Component} & \textbf{Version} \\
+\midrule
+Operating system & Debian GNU/Linux 12 (bookworm) \\
+Python & 3.11.2 \\
+TensorFlow & 2.19.1 \\
+Keras API & \code{tf\_keras} \\
+Akida & 2.19.1 \\
+CNN2SNN & 2.19.1 \\
+QuantizeML & 1.2.3 \\
+Device & \code{BC.00.000.002} \\
+Host configuration & \code{performance} governor; \code{throttled=0x0} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+These versions describe the environment used in the experiment. Fully reproducing
+the results also requires the models, data and the same measurement procedure.
+
+\section{AoA models}
+
+The thesis used two networks to estimate the angle of arrival (\emph{Angle of Arrival},
+AoA). Each sample contained eight integer envelope intensity values between 0 and 15.
+
+The model output contained 180 values, one for each class. Class $c$ corresponded
+to the angle
+
+\begin{equation}
+\theta = 2c.
+\end{equation}
+
+The two final models were:
+
+\begin{table}[H]
+\centering
+\caption{AoA models used in the thesis.}
+\label{tab:tfg-models}
+\begin{tabularx}{\textwidth}{@{}L{0.23\textwidth}L{0.28\textwidth}L{0.23\textwidth}Y@{}}
+\toprule
+\textbf{Model} & \textbf{Architecture} & \textbf{Weights excluding biases} & \textbf{Use} \\
+\midrule
+Compact &
+$8\rightarrow10\rightarrow180$ &
+1,880 &
+Low-complexity model \\
+
+Main &
+$8\rightarrow957\rightarrow180$ &
+179,916 &
+Higher-accuracy model \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Angular error was calculated accounting for the circular nature of the angle:
+
+\begin{equation}
+e_{\mathrm{circ}}
+=
+((\hat{\theta}-\theta+180)\bmod 360)-180.
+\end{equation}
+
+For example, a prediction of $0^\circ$ for a reference of $358^\circ$ gives an error
+of $2^\circ$, not $-358^\circ$.
+
+The FBZ models and dataset used in the original campaign are not part of this release.
+The test model included in the repository is used only to check the environment and board.
+
+\section{Results}
+
+Evaluation used 576 samples. The main model achieved an angular MAE of $4.09^\circ$,
+compared with $9.13^\circ$ for the compact model \cite{poveda_tfg_2026}.
+
+Among the configurations studied, the lowest estimated energy points were:
+
+\begin{itemize}
+  \item compact model: \code{Economy + HwPr}, with 0.565~ms,
+        770.0~mW and 435.2~$\mu$J;
+  \item main model: \code{Performance + AllNps}, with 0.756~ms,
+        731.8~mW and 553.3~$\mu$J.
+\end{itemize}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\textwidth]{nine-mode-results.png}
+  \caption[AoA model results]
+  {Latency and estimated energy for both models across the nine clock and mapping
+  mode combinations evaluated in the thesis.}
+  \label{fig:tfg-results}
+\end{figure}
+
+Latency was measured from the host around the execution call. Power was measured
+through the Akida API, rather than as total consumption of the Raspberry Pi, carrier
+and board.
+
+These results describe only the platform used in the thesis.

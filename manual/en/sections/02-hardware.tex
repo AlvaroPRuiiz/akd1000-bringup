@@ -1,0 +1,110 @@
+\chapter{Hardware, power and assembly}
+\label{chap:hardware}
+
+\section{Assembly inventory}
+
+Before starting, record the information you can check for each component.
+Do not infer a part number from a photograph or its similarity to another model.
+If a detail such as a board revision or supply voltage cannot be confirmed from the
+label, invoice or manufacturer's documentation, mark it as \emph{unverified}.
+
+\begin{table}[H]
+\centering
+\caption{Basic assembly information.}
+\label{tab:inventario-lector}
+\begin{tabularx}{\textwidth}{@{}L{0.28\textwidth}L{0.31\textwidth}Y@{}}
+\toprule
+\textbf{Component} & \textbf{Information} & \textbf{Source} \\
+\midrule
+Host & Manufacturer, model, RAM and revision & Host, firmware or invoice \\
+Operating system & Distribution, version and architecture & \code{/etc/os-release}, \code{uname -m} \\
+Kernel & Full version & \code{uname -r} \\
+Akida board & Model and revision & Label and BrainChip documentation \\
+Adapter & Manufacturer, model and link type & Board markings and manufacturer's documentation \\
+Cable & Type and orientation & Markings and adapter documentation \\
+Host power supply & Voltage and power & Power supply label \\
+Board or carrier power supply & Voltage, polarity and connector & Label and manufacturer's documentation \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+M.2, Mini PCIe, conventional PCIe and the Raspberry Pi 5 FFC connector are not
+equivalent. Always check the connection type and cable orientation in the documentation
+for the hardware you are using.
+
+\section{Supported topologies}
+
+\subsection{Linux host with a PCIe slot}
+
+On a Linux PC, install the board in a compatible PCIe slot and power it as specified
+in its documentation. Shut down and disconnect the host before inserting or removing
+the board.
+
+After assembly, continue with \cref{chap:host-driver}. If \code{lspci} does not detect
+a new PCIe device, resolve that problem before configuring Python.
+
+\subsection{Raspberry Pi 5 with an FFC-to-PCIe adapter}
+
+Raspberry Pi 5 has a PCIe Gen~2~$\times$1 interface accessible through an FFC connector
+\cite{rpi_pcie}. A conventional PCIe board needs an adapter that routes this link to
+a compatible slot.
+
+Even if the adapter has a physically longer slot, the Raspberry Pi 5 link remains
+$\times$1.
+
+\Cref{fig:montaje-aislado} shows the assembly used in the thesis.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.92\textwidth]{hardware-carrier-detail-isolated.png}
+  \caption[Raspberry Pi 5, carrier and AKD1000 assembly]{Assembly consisting of a Raspberry Pi 5,
+  a PCIe adapter and the BrainChip AKD1000 board used in the thesis.}
+  \label{fig:montaje-aislado}
+\end{figure}
+
+\section{Assembly}
+
+If the manufacturer specifies a different connection sequence, follow that procedure.
+
+\begin{enumerate}
+  \item Shut down the host and disconnect the power supplies.
+  \item Check the FFC cable orientation and the adapter or board supply voltage.
+  \item Connect the FFC cable to the adapter in the specified orientation.
+  \item Insert the AKD1000 fully into the carrier's PCIe slot.
+  \item Inspect the connections before powering the system again.
+\end{enumerate}
+
+\begin{stopbox}{Electrical fault}
+Disconnect power if you notice smoke, an unusual smell, excessive temperature or any
+other sign of a possible power or assembly fault.
+\end{stopbox}
+
+\section{Waveshare carrier used in the thesis}
+
+The thesis assembly used a Waveshare adapter connected to the Raspberry Pi 5 through
+a 50~mm FFC cable. The board is marked \code{DC 12V} and
+\emph{PCIe TO PCIe x1 Board (C)}.
+
+Waveshare's current documentation describes this model as having a slot mechanically
+compatible with PCIe $\times$1, $\times$4, $\times$8 and $\times$16 boards
+\cite{waveshare_board_c}. The Raspberry Pi 5 link remains PCIe $\times$1 in every case.
+
+The exact adapter item number was not retained. \Cref{tab:componentes-tfg} lists the
+available identification details for the assembly.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\textwidth]{hardware-powered-isolated.png}
+  \caption[Powered assembly]{Assembly used during one of the thesis sessions.}
+  \label{fig:montaje-alimentado}
+\end{figure}
+
+\section{Checks before power-on}
+
+Before powering the assembly, check that the FFC cable has the correct orientation,
+the board is fully seated and the supply voltages match those specified for the components.
+
+\begin{stopbox}{Stop condition H0}
+If you cannot confirm the voltage, polarity or orientation of a connection, do not
+power the assembly until you have checked the relevant documentation.
+\end{stopbox}
